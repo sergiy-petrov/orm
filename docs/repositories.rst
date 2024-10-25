@@ -9,8 +9,7 @@ write collecting logic, build queries, etc.
 
 Repositories are usually modeled as collections to abstract away persistence
 lingo, so it is very common to see methods
-like ``find($id)``, ``findByName("Patrick")``, as if your entities would be in
-a ``Collection`` object instead of a database.
+like ``findByName("Lasso")``, treating the repository as a collection.
 
 Doctrine comes with a generic ``Doctrine\Common\Persistence\ObjectRepository``
 interface that lets you easily find one,
@@ -20,58 +19,56 @@ and an implementation of it in ``Doctrine\ORM\EntityRepository``.
 Getting a repository instance
 =============================
 
-The easiest way to get a repository is to let the EntityManager generate one
+The easiest way to get a repository is to let the EntityManager provide one
 for the Entity you want:
 
 .. code-block:: php
 
+.. code-block:: php
+
+  use Doctrine\ORM\Mapping as ORM;
+  use Doctrine\Common\Collections\ArrayCollection;
+  use Doctrine\Common\Collections\Collection;
+
+  #[ORM\Entity(repositoryClass: "App\Doctrine\ORM\Repository\ScientistRepository")]
+  class Scientist
+  {
+      #[ORM\Id]
+      #[ORM\Column(type: "integer")]
+      #[ORM\GeneratedValue(strategy: "AUTO")]
+      private int $id;
+
+      #[ORM\Column(type: "string", nullable: false)]
+      private string $firstName;
+
+      #[ORM\Column(type: "string", nullable: false)]
+      private string $lastName;
+
+      #[ORM\OneToMany(targetEntity: Theory::class, mappedBy: "scientist")]
+      private Collection $theories;
+
+      public function __construct()
+      {
+          $this->theories = new ArrayCollection();
+      }
+  }
+
   $repository = EntityManager::getRepository(Scientist::class);
 
-This will generate an instance of the `Doctrine\ORM\EntityRepository`, a
-generic implementation ready to be queried for the class that was given to it.
+This will return an instance of the ``App\Doctrine\ORM\Repository\ScientistRepository``.
+For entities that do not have a repositoryClass, an instnace of
+the config ``reposiotry`` repository class is returned.
+
 
 Injecting repositories
 ======================
 
-You can inject generic repositories by using Laravel's
-`contextual binding <https://laravel.com/docs/container#contextual-binding>`_.
+Injecting repositories is **not** recommended.  Inject the entity manager
+instead and always use it as a container for repositories.
 
-.. code-block:: php
-
-  namespace App\Entities\Research;
-
-  use Doctrine\Common\Persistence\ObjectRepository;
-
-  class Laboratory
-  {
-      /**
-      * @var ObjectRepository
-      */
-      private $scientists;
-
-      public function __construct(ObjectRepository $scientists)
-      {
-          $this->scientists = $scientists;
-      }
-  }
-
-  // Then, in one of your ServiceProviders
-  use App\Entities\Research\Laboratory;
-  use App\Entities\Research\Scientist;
-  use Doctrine\Common\Persistence\ObjectRepository;
-
-  class AppServiceProvider
-  {
-      public function register()
-      {
-          $this->app
-              ->when(Laboratory::class)
-              ->needs(ObjectRepository::class)
-              ->give(function(){
-                  return EntityManager::getRepository(Scientist::class);
-              });
-      }
-  }
+The entity manager is both an entity manager and a container similar to
+PSR-11.  Instead of injecting repositories, take a step back and be comfortable
+injecting the container (entity manager).
 
 
 Extending repositories
