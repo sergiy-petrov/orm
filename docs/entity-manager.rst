@@ -3,7 +3,7 @@ Entity Manager
 ==============
 
 The EntityManager is the central access point to ORM functionality. It can be
-used to find, persist, flush and remove entities.
+used to find, persist, remove, and flush entities.
 
 Using the EntityManager
 =======================
@@ -102,7 +102,7 @@ persisted the changes to ``$article`` to the database yet.
 Persisting
 ==========
 
-By passing the entity through the ``$entityManager->persist`` method of the EntityManager,
+By passing the entity through the ``$entityManager->persist()`` method of the EntityManager,
 that entity becomes managed, which means that its persistence is from now
 on managed by an EntityManager. As a result the persistent state of such
 an entity will subsequently be properly synchronised with the database
