@@ -15,12 +15,9 @@ wish to use with authentication.
 
   class User implements \Illuminate\Contracts\Auth\Authenticatable
   {
-
-      /**
-      * @ORM\Id
-      * @ORM\GeneratedValue
-      * @ORM\Column(type="integer")
-      */
+      #[ORM\Id]
+      #[ORM\Column(type: "integer")]
+      #[ORM\GeneratedValue(strategy: "AUTO")]
       protected $id;
 
       public function getAuthIdentifierName()
