@@ -7,9 +7,9 @@ the ``.env`` file: ``DB_CONNECTION``.  Further configuration of a new install
 is not necessary to get started.
 
 Unlike Eloquent, Doctrine ORM is **not** an active record pattern, but a
-`data-mapper <https://tsh.io/blog/active-record-vs-data-mapper-patterns-in-php/>`_
- pattern. Every active record model extends a base class that implements all
- the persistent, database, logic.
+`data-mapper pattern <https://tsh.io/blog/active-record-vs-data-mapper-patterns-in-php/>`_.
+Every active record model extends a base class that implements all
+the persistent, database, logic.
 
 Entities are objects with identity. Their identity has a conceptual meaning
 inside your domain. In an application, each theory has a unique id. You can
@@ -19,7 +19,7 @@ Doctrine entities don't extend any class, they are just plain PHP classes
 with properties (and, historically, getters and setters).
 Historically, the properties are protected or private, so they only can be accessed
 through getters and setters.  However, with property hooks in PHP 8.4, entities
-composed of gloal properties only will become the norm.
+composed of global properties only will become the norm.
 
 
 .. code-block:: php
@@ -58,7 +58,7 @@ You can easily add on new relations with ``->add()``, remove them with
 ``->contains()``
 
 The ``Scientist`` entity, used in the example above, looks like this when using
-annotations for the meta data.
+attributes for the metadata.
 
 .. image:: assets/scientist-theory.png
 
