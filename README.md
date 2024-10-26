@@ -12,7 +12,7 @@ An integration library for Laravel and Doctrine ORM
 [![Code Coverage](https://codecov.io/gh/laravel-doctrine/orm/branch/3.0.x/graph/badge.svg?token=3CpQzDXOWX)](https://codecov.io/gh/laravel-doctrine/orm)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%201-brightgreen.svg)](https://img.shields.io/badge/PHPStan-level%201-brightgreen.svg)
 [![Documentation](https://readthedocs.org/projects/laravel-doctrine-orm-official/badge/?version=latest)](https://laravel-doctrine-orm-official.readthedocs.io/en/latest/)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://app.gitter.im/#/room/#laravel-doctrine_community:gitter.im)
+[![Packagist Downloads](https://img.shields.io/packagist/dd/laravel-doctrine/orm)](https://packagist.org/packages/laravel-doctrine/orm)
 [![License](https://poser.pugx.org/laravel-doctrine/orm/license)](//packagist.org/packages/laravel-doctrine/orm)
 
 
