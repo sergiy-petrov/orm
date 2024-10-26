@@ -34,6 +34,7 @@ Environment variables used inside the config
   Default is ``DOCTRINE_CACHE``.
 * ``DOCTRINE_RESULT_CACHE`` - The cache handler for the results.
   Default is ``DOCTRINE_CACHE``.
+* ``DOCTRINE_LOGGER`` - The logger to use to log DQL queries.
 
 
 Application Folder Structure

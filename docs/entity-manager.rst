@@ -11,7 +11,7 @@ Using the EntityManager
 Facade
 ------
 
-You can use the ``EntityManager`` facade to access the `EntityManager` methods
+You can use the ``EntityManager`` facade to access the `EntityManager` methods.
 
 .. code_block:: php
 
@@ -33,11 +33,11 @@ Dependency Injection
 
 .. code-block:: php
 
-  use Doctrine\ORM\EntityManagerInterface;
+  use Doctrine\ORM\EntityManager;
 
   class ExampleController extends Controller
   {
-      public function __construct(protected EntityManagerInterface $em)
+      public function __construct(protected EntityManager $entityManager)
       {
       }
   }
@@ -46,21 +46,24 @@ Dependency Injection
 Multiple connections
 --------------------
 
-If you are using multiple managers, ``EntityManagerInterface`` will only return
-the default connection.  If you want to have control over which EnityManager
-you want, you'll have to inject ``Doctrine\Common\Persistence\ManagerRegistry``
+If you are using multiple entity managers, dependency injection will only return
+the default entity manager.  For control over which
+entity manager you want, you'll have to inject
+``Doctrine\Common\Persistence\ManagerRegistry``
 
 
 .. code-block:: php
+
   use Doctrine\Common\Persistence\ManagerRegistry;
+  use Doctrine\ORM\EntityManager;
 
   class ExampleController extends Controller
   {
-      protected $em;
+      protected EntityManager $entityManager;
 
-      public function __construct(ManagerRegistry $em)
+      public function __construct(protected ManagerRegistry $managerRegistry)
       {
-          $this->em = $em->getManager('otherConnection');
+          $this->em = $managerRegistry->getManager('second');
       }
   }
 
@@ -70,8 +73,8 @@ Finding entities
 
 .. note::
 
-    For making the examples more expressive, we will use the facade.
-    However I do recommend to leverage dependency injection as much as possible.
+    For making the examples more expressive, facades are used.
+    However it is recommend to leverage dependency injection as much as possible.
     This makes mocking the EntityManager in your tests a lot easier.
 
 Entities are objects with identity. Their identity has a conceptual meaning
@@ -84,18 +87,18 @@ those changes. This pattern is the `Identity Map Pattern <https://martinfowler.c
 which means that Doctrine keeps a map of each entity and ids that have been
 retrieved per request and keeps return the same instances on every find.
 
-``$article`` and ``$article1`` will be identical, eventhough we haven't
+``$entity`` and ``$entityCopy`` will be identical, eventhough we haven't
 persisted the changes to ``$article`` to the database yet.
 
 .. code-block:: php
 
-  $article = EntityManager::find('App\Entities\Article', 1);
-  $article->setTitle('Different title');
+  $entity = EntityManager::find('App\Entities\Article', 1);
+  $entity->setTitle('Different title');
 
-  $article2 = EntityManager::find('App\Entities\Article', 1);
+  $entityCopy = EntityManager::find('App\Entities\Article', 1);
 
   if ($article === $article2) {
-      echo "Yes we are the same!";
+      echo 'Yes, we are the same!';
   }
 
 
@@ -104,7 +107,7 @@ Persisting
 
 By passing the entity through the ``$entityManager->persist()`` method of the EntityManager,
 that entity becomes managed, which means that its persistence is from now
-on managed by an EntityManager. As a result the persistent state of such
+on managed by an EntityManager. As a result, the persistent state of such
 an entity will subsequently be properly synchronised with the database
 when ``$entityManager->flush()`` is invoked.
 
