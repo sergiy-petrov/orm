@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelDoctrineTest\ORM\Entity;
+namespace LaravelDoctrineTest\ORM\Assets\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: "App\Doctrine\ORM\Repository\TheoryRepository")]
+#[ORM\Entity(repositoryClass: "LaravelDoctrineTest\ORM\Assets\Repository\TheoryRepository")]
 class Theory
 {
     #[ORM\Id]
