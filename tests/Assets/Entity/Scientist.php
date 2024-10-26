@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelDoctrineTest\ORM\Entity;
+namespace LaravelDoctrineTest\ORM\Assets\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
