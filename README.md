@@ -16,14 +16,6 @@ An integration library for Laravel and Doctrine ORM
 [![License](https://poser.pugx.org/laravel-doctrine/orm/license)](//packagist.org/packages/laravel-doctrine/orm)
 
 
-Version 3.0 Notes
------------------
-
-Version 3 supports DBAL ^4.0 and ORM ^3.0.  See the 
-[upgrade guide](https://laravel-doctrine-orm-official.readthedocs.io/en/latest/upgrade.html) 
-for more information.
-
-
 Installation
 ------------
 
@@ -48,6 +40,13 @@ Documentation
 Full documentation at https://laravel-doctrine-orm-official.readthedocs.io
 or in the docs directory.
 
+
+Versions
+--------
+
+* Version 3 supports DBAL ^4.0 and ORM ^3.0.  See the [upgrade guide](https://laravel-doctrine-orm-official.readthedocs.io/en/latest/upgrade.html) for more information.
+* Version 2 supports Laravel 9 - 11, DBAL ^3.0 and ORM ^2.0.
+* Version 1 supports Laravel 9, DBAL ^2.0 and ORM ^2.0.
 
 License
 -------
