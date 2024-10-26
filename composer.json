@@ -63,6 +63,9 @@
         },
         "files": [
             "tests/helpers.php"
+        ],
+        "classmap": [
+            "tests"
         ]
     },
     "suggest": {
