@@ -9,6 +9,8 @@ use LaravelDoctrine\ORM\Configuration\Driver;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
+use function storage_path;
+
 class PhpFileCacheProvider implements Driver
 {
     public function __construct(protected Repository $config)
