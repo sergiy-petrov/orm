@@ -43,8 +43,8 @@ Dependency Injection
   }
 
 
-Multiple connections
---------------------
+Multiple Entity Managers
+------------------------
 
 If you are using multiple entity managers, dependency injection will only return
 the default entity manager.  For control over which
@@ -61,9 +61,9 @@ entity manager you want, you'll have to inject
   {
       protected EntityManager $entityManager;
 
-      public function __construct(protected ManagerRegistry $managerRegistry)
+      public function __construct(ManagerRegistry $managerRegistry)
       {
-          $this->em = $managerRegistry->getManager('second');
+          $this->entityManager = $managerRegistry->getManager('second');
       }
   }
 
@@ -93,13 +93,11 @@ persisted the changes to ``$article`` to the database yet.
 .. code-block:: php
 
   $entity = EntityManager::find('App\Entities\Article', 1);
-  $entity->setTitle('Different title');
+  $entity->title = 'Different title';
 
   $entityCopy = EntityManager::find('App\Entities\Article', 1);
 
-  if ($article === $article2) {
-      echo 'Yes, we are the same!';
-  }
+  assert($entityCopy->title === 'Different title');
 
 
 Persisting
@@ -125,23 +123,6 @@ when ``$entityManager->flush()`` is invoked.
   EntityManager::flush();
 
 
-Flushing
-========
-
-Whenever you have changed the state of an Entity
-(updated, created, removed) you will have to flush the entity manager to
-persist these changes to the database.
-
-.. code-block:: php
-
-  // Flush all changes
-  EntityManager::flush();
-
-  // Only flush changes of given entity.
-  // If you have to use this, you're doing it wrong.
-  EntityManager::flush($article);
-
-
 Removing (deleting)
 ===================
 
@@ -156,7 +137,23 @@ deleted once ``$entityManager->flush()`` is invoked.
   EntityManager::flush();
 
 
-More information about the entity manager directly from Doctrine:
+Flushing
+========
+
+Whenever the state of an Entity has changed (persisted, updated, removed),
+flush the entity manager to persist the changes to the database.
+
+.. code-block:: php
+
+  // Flush all changes
+  EntityManager::flush();
+
+  // Only flush changes of given entity.
+  // NOTE:  If you're doing it this way, one entity at a time, you're doing it wrong.
+  EntityManager::flush($article);
+
+
+More information about the entity manager:
 https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/working-with-objects.html
 
 
