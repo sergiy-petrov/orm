@@ -1,13 +1,19 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature;
+
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Illuminate\Contracts\Container\Container;
+use InvalidArgumentException;
 use LaravelDoctrine\ORM\EntityManagerFactory;
 use LaravelDoctrine\ORM\IlluminateRegistry;
 use Mockery as m;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use stdClass;
 
 class IlluminateRegistryTest extends TestCase
 {
