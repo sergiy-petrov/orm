@@ -11,6 +11,7 @@ use Symfony\Component\Finder\Finder;
 
 use function array_merge;
 use function call_user_func;
+use function database_path;
 use function is_dir;
 
 class Factory implements ArrayAccess

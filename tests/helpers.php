@@ -17,3 +17,7 @@ function config_path($path = '') {
 function base_path($path = '') {
     return $path;
 }
+
+function storage_path($path = '') {
+    return $path;
+}
