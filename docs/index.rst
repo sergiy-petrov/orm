@@ -32,28 +32,27 @@ object-oriented programming if persistence and entities are seperate.
 
   :caption: Table of Contents
 
-  upgrade
-
   install
   configuration
+  connections
   entities
-  metadata
-  entity-manager
-  multiple-connections
   repositories
+  entity-manager
+  caching
   console
 
   doctrine-manager
-  connections
-  caching
-  troubleshooting
 
   auth
   passwords
-  testing
-  validation
   notifications
   pagination
+  validation
+  testing
+
+  multiple-connections
+  troubleshooting
+  upgrade
 
 
 .. role:: raw-html(raw)
