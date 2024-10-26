@@ -130,3 +130,9 @@ entity (most likely your User entity). Usage of the
   {
       return 'custom';
   }
+
+
+.. role:: raw-html(raw)
+   :format: html
+
+.. include:: footer.rst

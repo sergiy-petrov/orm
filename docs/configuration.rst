@@ -2,7 +2,7 @@
 Config File
 ===========
 
-This is an overview of all of the options provided in `~/config/doctrine.php`
+This is an overview of the options provided in `~/config/doctrine.php`
 
 
 Entity Manager
@@ -37,7 +37,7 @@ Within the entity manager name array are configuration settings.  These are
 * ``meta`` - The type of metadata configuration.  Valid values are
   ``attributes``, ``xml``, ``simplified_xml``, ``static_php``, ``php``.
   The majority of configurations use ``attributes`` or ``xml`` and these
-  metadata configurtions are recommended.
+  metadata configurations are recommended.
 * ``namespaces`` - If your entities are not located in the configured app
   namespace, you can specify a different one here.
 * ``naming_strategy`` - Default is the included Laravel naming strategy.
@@ -79,32 +79,29 @@ array.
 Example configuration
 
 .. code-block:: php
-  'managers'                  => [
+  'managers' => [
       'default' => [
-          'dev'        => env('APP_DEBUG'),
-          'meta'       => env('DOCTRINE_METADATA', 'attributes'),
+          'dev' => env('APP_DEBUG', false),
           'connection' => env('DB_CONNECTION', 'mysql'),
-          'namespaces' => [
-              'App'
-          ],
-          'paths'      => [
-              base_path('app')
-          ],
+          'meta' => env('DOCTRINE_METADATA', 'xml'),
+          'paths' => [__DIR__ . '/doctrine-orm-metadata'],
           'repository' => Doctrine\ORM\EntityRepository::class,
-          'proxies'    => [
-              'namespace'     => false,
-              'path'          => storage_path('proxies'),
+          'logger' => env('DOCTRINE_LOGGER', false),
+          'proxies' => [
+              'namespace' => false,
+              'path' => storage_path('proxies'),
               'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false)
           ],
           'events' => ...
           'filters' => ...
-      ]
-  ]
+      ],
+  ],
+
 
 Namespace Alias
 ===============
 
-To use namespace alias, you just have to specify then as key of each namespace.
+To use namespace alias, specify the alias as key of each namespace.
 
 Example:
 
@@ -144,7 +141,7 @@ Extensions
 ==========
 
 Extensions can be enabled by adding them to this array. They provide additional
-functionality Entities (Timestamps, Loggable, etc.)
+functionality to entities (Timestamps, Loggable, etc.)
 
 To use the extensions in this sample you must install the extensions package.
 
@@ -157,17 +154,17 @@ and follow the
 
 .. code-block:: php
 
-  'extensions'                => [
-      //LaravelDoctrine\ORM\Extensions\TablePrefix\TablePrefixExtension::class,
-      //LaravelDoctrine\Extensions\Timestamps\TimestampableExtension::class,
-      //LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
-      //LaravelDoctrine\Extensions\Sluggable\SluggableExtension::class,
-      //LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
-      //LaravelDoctrine\Extensions\Tree\TreeExtension::class,
-      //LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
-      //LaravelDoctrine\Extensions\Blameable\BlameableExtension::class,
-      //LaravelDoctrine\Extensions\IpTraceable\IpTraceableExtension::class,
-      //LaravelDoctrine\Extensions\Translatable\TranslatableExtension::class
+  'extensions' => [
+      LaravelDoctrine\ORM\Extensions\TablePrefix\TablePrefixExtension::class,
+      LaravelDoctrine\Extensions\Timestamps\TimestampableExtension::class,
+      LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
+      LaravelDoctrine\Extensions\Sluggable\SluggableExtension::class,
+      LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
+      LaravelDoctrine\Extensions\Tree\TreeExtension::class,
+      LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
+      LaravelDoctrine\Extensions\Blameable\BlameableExtension::class,
+      LaravelDoctrine\Extensions\IpTraceable\IpTraceableExtension::class,
+      LaravelDoctrine\Extensions\Translatable\TranslatableExtension::class
   ],
 
 
@@ -270,7 +267,7 @@ Cache
 
 Caches will be used to cache metadata, results, and queries.
 
-Available cache providers
+Available cache providers:
 
 * apc
 * array

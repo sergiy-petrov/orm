@@ -20,9 +20,7 @@ Getting a repository instance
 =============================
 
 The easiest way to get a repository is to let the EntityManager provide one
-for the Entity you want:
-
-.. code-block:: php
+for the Entity you want.
 
 .. code-block:: php
 
