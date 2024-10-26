@@ -58,6 +58,12 @@
         ]
     },
     "autoload-dev": {
+        "psr-4": {
+            "LaravelDoctrineTest\\ORM\\": "tests/"
+        },
+        "files": [
+            "tests/helpers.php"
+        ],
         "classmap": [
             "tests"
         ]

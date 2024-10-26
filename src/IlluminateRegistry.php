@@ -13,11 +13,11 @@ use Exception;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use ReflectionClass;
+use RuntimeException;
+use Throwable;
 
-use function count;
 use function explode;
 use function head;
-use function reset;
 use function sprintf;
 use function strpos;
 
@@ -158,7 +158,7 @@ final class IlluminateRegistry implements ManagerRegistry
      */
     public function getManager(string|null $name = null): mixed
     {
-        $name = $name ?: $this->getDefaultManagerName();
+        $name ??= $this->getDefaultManagerName();
 
         if (! $this->managerExists($name)) {
             throw new InvalidArgumentException(sprintf('Doctrine Manager named "%s" does not exist.', $name));
@@ -300,42 +300,42 @@ final class IlluminateRegistry implements ManagerRegistry
     /**
      * Gets the object manager associated with a given class.
      *
-     * @param string $class A persistent object class name.
+     * @param class-string $className A persistent object class name.
      */
-    public function getManagerForClass(string $class): ObjectManager|null
+    public function getManagerForClass(string $className): ObjectManager|null
     {
         // Check for namespace alias
-        if (strpos($class, ':') !== false) {
-            [$namespaceAlias, $simpleClassName] = explode(':', $class, 2);
-            $class                              = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
+        if (strpos($className, ':') !== false) {
+            [$namespaceAlias, $simpleClassName] = explode(':', $className, 2);
+            $className                          = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
         }
 
-        $proxyClass = new ReflectionClass($class);
-        if ($proxyClass->implementsInterface(Proxy::class)) {
-            $class = $proxyClass->getParentClass()->getName();
+        // Check for proxy class
+        try {
+            $proxyClass = new ReflectionClass($className);
+
+            if ($proxyClass->implementsInterface(Proxy::class)) {
+                $className = $proxyClass->getParentClass()->getName();
+            }
+        } catch (Throwable) {
+            throw new RuntimeException('Class ' . $className . ' is not a valid class name.');
         }
 
-        $managerNames = $this->getManagerNames();
-
-        if (count($managerNames) === 1) {
-            return $this->getManager(reset($managerNames));
-        }
-
-        foreach ($managerNames as $name) {
-            $manager = $this->getManager($name);
-
-            if ($manager->getMetadataFactory()->isTransient($class)) {
+        foreach ($this->getManagers() as $entityManager) {
+            if ($entityManager->getMetadataFactory()->isTransient($className)) {
+                // @codeCoverageIgnoreStart
                 continue;
+                // @codeCoverageIgnoreEnd
             }
 
-            foreach ($manager->getMetadataFactory()->getAllMetadata() as $metadata) {
-                if ($metadata->getName() === $class) {
-                    return $manager;
+            foreach ($entityManager->getMetadataFactory()->getAllMetadata() as $metadata) {
+                if ($metadata->getName() === $className) {
+                    return $entityManager;
                 }
             }
         }
 
-        return null;
+        throw new RuntimeException('No manager found for class ' . $className);
     }
 
     /**
@@ -372,13 +372,17 @@ final class IlluminateRegistry implements ManagerRegistry
         return self::CONNECTION_BINDING_PREFIX . $connection;
     }
 
-    public function setDefaultManager(string $defaultManager): void
+    public function setDefaultManager(string $defaultManager): self
     {
         $this->defaultManager = $defaultManager;
+
+        return $this;
     }
 
-    public function setDefaultConnection(string $defaultConnection): void
+    public function setDefaultConnection(string $defaultConnection): self
     {
         $this->defaultConnection = $defaultConnection;
+
+        return $this;
     }
 }

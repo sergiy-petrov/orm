@@ -54,6 +54,27 @@ class IlluminateRegistryTest extends TestCase
         $this->assertTrue($this->registry->connectionExists('default'));
     }
 
+    public function testCanAddDefaultManager()
+    {
+        $this->container->shouldReceive('singleton')->times(4);
+        $this->registry->addManager('default', ['settings']);
+        $this->registry->addManager('second', ['settings']);
+        $this->registry->setDefaultManager('second');
+
+        $this->assertTrue($this->registry->managerExists('second'));
+        $this->assertEquals('second', $this->registry->getDefaultManagerName());
+    }
+
+    public function testCanAddDefaultConnection()
+    {
+        $this->container->shouldReceive('singleton')->twice();
+        $this->registry->addConnection('default');
+        $this->registry->addConnection('second');
+        $this->registry->setDefaultConnection('second');
+
+        $this->assertEquals('second', $this->registry->getDefaultConnectionName());
+    }
+
     public function test_get_default_connection_name()
     {
         // Will return first, when no default name
@@ -368,6 +389,146 @@ class IlluminateRegistryTest extends TestCase
         $configuration->shouldReceive('getEntityNamespace')->with('Alias')->once()->andReturn('Namespace');
 
         $this->assertEquals('Namespace', $this->registry->getAliasNamespace('Alias'));
+    }
+
+    public function testGetRepository(): void
+    {
+        $this->container->shouldReceive('singleton');
+        $this->registry->addManager('default');
+
+        $entityManager = m::mock(EntityManagerInterface::class);
+        $this->container->shouldReceive('make')
+            ->with('doctrine.managers.default')
+            ->andReturn($entityManager);
+
+        $repository = m::mock(\Doctrine\ORM\EntityRepository::class);
+
+        $entityManager->shouldReceive('getRepository')
+            ->with('App:Entity')
+            ->once()
+            ->andReturn($repository);
+
+        $this->assertEquals($repository, $this->registry->getRepository('App:Entity'));
+    }
+
+    public function testGetManagerForClass(): void
+    {
+        $this->container->shouldReceive('singleton');
+        $this->registry->addManager('default');
+
+        $entityManager = m::mock(EntityManagerInterface::class);
+        $this->container->shouldReceive('make')
+            ->with('doctrine.managers.default')
+            ->andReturn($entityManager);
+
+        $metadataFactory = m::mock(\Doctrine\ORM\Mapping\ClassMetadataFactory::class);
+        $metadataFactory->shouldReceive('isTransient')
+            ->with('LaravelDoctrineTest\ORM\Entity\Scientist')
+            ->once()
+            ->andReturnFalse();
+
+        $metadata = m::mock(\Doctrine\Persistence\Mapping\ClassMetadata::class);
+        $metadata->shouldReceive('getName')
+            ->once()
+            ->andReturn('LaravelDoctrineTest\ORM\Entity\Scientist');
+
+        $metadataFactory->shouldReceive('getAllMetadata')
+            ->once()
+            ->andReturn([$metadata]);
+
+        $entityManager->shouldReceive('getMetadataFactory')
+            ->andReturn($metadataFactory);
+
+        $this->assertEquals($entityManager, $this->registry->getManagerForClass('LaravelDoctrineTest\ORM\Entity\Scientist'));
+    }
+
+    public function testGetManagerForClassWithNamespace(): void
+    {
+        $this->container->shouldReceive('singleton');
+        $this->registry->addManager('default');
+
+        $configuration = m::mock(Configuration::class);
+        $entityManager = m::mock(EntityManagerInterface::class);
+
+        $this->container->shouldReceive('make')
+            ->with('doctrine.managers.default')
+            ->andReturn($entityManager);
+
+        $configuration->shouldReceive('getEntityNamespace')
+            ->with('Alias')
+            ->once()
+            ->andReturn('LaravelDoctrineTest\ORM\Entity');
+
+        $entityManager->shouldReceive('getConfiguration')->andReturn($configuration);
+
+
+        $metadataFactory = m::mock(\Doctrine\ORM\Mapping\ClassMetadataFactory::class);
+        $metadataFactory->shouldReceive('isTransient')
+            ->with('LaravelDoctrineTest\ORM\Entity\Scientist')
+            ->once()
+            ->andReturnFalse();
+
+        $metadata = m::mock(\Doctrine\Persistence\Mapping\ClassMetadata::class);
+        $metadata->shouldReceive('getName')
+            ->once()
+            ->andReturn('LaravelDoctrineTest\ORM\Entity\Scientist');
+
+        $metadataFactory->shouldReceive('getAllMetadata')
+            ->once()
+            ->andReturn([$metadata]);
+
+        $entityManager->shouldReceive('getMetadataFactory')
+            ->andReturn($metadataFactory);
+
+        $this->assertEquals($entityManager, $this->registry->getManagerForClass('Alias:Scientist'));
+    }
+
+    public function testGetManagerForClassThrowsExceptionWhenNotFound(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $this->container->shouldReceive('singleton');
+        $this->registry->addManager('default');
+
+        $entityManager = m::mock(EntityManagerInterface::class);
+        $this->container->shouldReceive('make')
+            ->with('doctrine.managers.default')
+            ->andReturn($entityManager);
+
+        $metadataFactory = m::mock(\Doctrine\ORM\Mapping\ClassMetadataFactory::class);
+        $metadataFactory->shouldReceive('isTransient')
+            ->with('LaravelDoctrineTest\ORM\Entity\Scientist')
+            ->once()
+            ->andReturnFalse();
+
+        $metadata = m::mock(\Doctrine\Persistence\Mapping\ClassMetadata::class);
+        $metadata->shouldReceive('getName')
+            ->once()
+            ->andReturn('LaravelDoctrineTest\ORM\Entity\Theory');
+
+        $metadataFactory->shouldReceive('getAllMetadata')
+            ->once()
+            ->andReturn([$metadata]);
+
+        $entityManager->shouldReceive('getMetadataFactory')
+            ->andReturn($metadataFactory);
+
+        $this->assertEquals($entityManager, $this->registry->getManagerForClass('LaravelDoctrineTest\ORM\Entity\Scientist'));
+    }
+
+    public function testGetManagerForClassInvalidClass(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $this->container->shouldReceive('singleton');
+        $this->registry->addManager('default');
+
+        $entityManager = m::mock(EntityManagerInterface::class);
+        $this->container->shouldReceive('make')
+            ->with('doctrine.managers.default')
+            ->andReturn($entityManager);
+
+        $this->assertEquals($entityManager, $this->registry->getManagerForClass('LaravelDoctrineTest\ORM\Entity\ScientistInvalid'));
     }
 
     /**

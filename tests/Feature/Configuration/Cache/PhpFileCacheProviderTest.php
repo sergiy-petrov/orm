@@ -8,17 +8,17 @@ use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 class PhpFileCacheProviderTest extends AbstractCacheProviderTest
 {
     public function getProvider()
-    {                  
+    {
         $config = m::mock(Repository::class);
         $config->shouldReceive('get')
-            ->with('cache.stores.file.path',  __DIR__ . DIRECTORY_SEPARATOR . '../../Stubs/storage/framework/cache')
+            ->with('cache.stores.file.path',  'framework/cache')
             ->once()
             ->andReturn('/tmp');
 
         $config->shouldReceive('get')
             ->with('doctrine.cache.namespace', 'doctrine-cache')
             ->once()
-            ->andReturn('doctrine-cache');          
+            ->andReturn('doctrine-cache');
 
         return new PhpFileCacheProvider(
             $config,

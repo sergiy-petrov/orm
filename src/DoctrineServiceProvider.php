@@ -37,6 +37,7 @@ use LaravelDoctrine\ORM\Validation\PresenceVerifierProvider;
 
 use function assert;
 use function class_exists;
+use function config_path;
 use function property_exists;
 
 class DoctrineServiceProvider extends ServiceProvider

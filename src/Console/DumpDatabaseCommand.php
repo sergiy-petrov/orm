@@ -7,6 +7,7 @@ namespace LaravelDoctrine\ORM\Console;
 use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Contracts\Config\Repository;
 
+use function base_path;
 use function exec;
 
 class DumpDatabaseCommand extends Command
