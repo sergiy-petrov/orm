@@ -1,8 +1,14 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Notifications;
+
 use Doctrine\ORM\EntityManagerInterface;
+use LaravelDoctrine\ORM\Notifications\Notification;
+use Mockery;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use stdClass;
 
 class NotificationTest extends TestCase
 {
@@ -23,7 +29,7 @@ class NotificationTest extends TestCase
 
     public function testClassFunctions()
     {
-        $entity = new \LaravelDoctrine\ORM\Notifications\Notification();
+        $entity = new Notification();
 
         $entity->success();
         $this->assertEquals('success', $entity->getLevel());

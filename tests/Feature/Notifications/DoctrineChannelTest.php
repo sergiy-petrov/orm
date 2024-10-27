@@ -1,12 +1,20 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Notifications;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use LaravelDoctrine\ORM\Exceptions\NoEntityManagerFound;
 use LaravelDoctrine\ORM\Notifications\DoctrineChannel;
-use LaravelDoctrine\ORM\Notifications\Notifiable;
+use LaravelDoctrineTest\ORM\Assets\Notifications\CustomNotifiableStub;
+use LaravelDoctrineTest\ORM\Assets\Notifications\NotifiableStub;
+use LaravelDoctrineTest\ORM\Assets\Notifications\NotificationDatabaseStub;
+use LaravelDoctrineTest\ORM\Assets\Notifications\NotificationInvalidStub;
+use LaravelDoctrineTest\ORM\Assets\Notifications\NotificationStub;
+use Mockery;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class DoctrineChannelTest extends TestCase
 {
@@ -88,40 +96,5 @@ class DoctrineChannelTest extends TestCase
                        ->andReturnNull();
 
         $this->channel->send(new CustomNotifiableStub(), new NotificationStub());
-    }
-}
-
-class NotificationStub extends \Illuminate\Notifications\Notification
-{
-    public function toEntity()
-    {
-        return (new \LaravelDoctrine\ORM\Notifications\Notification);
-    }
-}
-
-class NotificationDatabaseStub extends \Illuminate\Notifications\Notification
-{
-    public function toDatabase()
-    {
-        return (new \LaravelDoctrine\ORM\Notifications\Notification);
-    }
-}
-
-class NotificationInvalidStub extends \Illuminate\Notifications\Notification
-{
-}
-
-class NotifiableStub
-{
-    use Notifiable;
-}
-
-class CustomNotifiableStub
-{
-    use Notifiable;
-
-    public function routeNotificationForDoctrine()
-    {
-        return 'custom';
     }
 }
