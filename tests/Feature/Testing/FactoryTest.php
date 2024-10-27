@@ -1,7 +1,11 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Testing;
+
 use Doctrine\Persistence\ManagerRegistry;
+use Faker;
 use LaravelDoctrine\ORM\Testing\Factory;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class FactoryTest extends MockeryTestCase
