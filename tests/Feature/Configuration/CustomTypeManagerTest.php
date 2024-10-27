@@ -1,9 +1,11 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Configuration;
+
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\Type;
 use LaravelDoctrine\ORM\Configuration\CustomTypeManager;
+use LaravelDoctrineTest\ORM\Assets\Configuration\TypeMock;
+use LaravelDoctrineTest\ORM\Assets\Configuration\TypeMock2;
 use PHPUnit\Framework\TestCase;
 
 class CustomTypeManagerTest extends TestCase
@@ -47,28 +49,5 @@ class CustomTypeManagerTest extends TestCase
 
         $manager = new CustomTypeManager;
         $manager->getType('non_existing');
-    }
-}
-
-class TypeMock extends Type
-{
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
-    {
-        return '';
-    }
-
-    public function getName()
-    {
-    }
-}
-class TypeMock2 extends Type
-{
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
-    {
-        return '';
-    }
-
-    public function getName()
-    {
     }
 }

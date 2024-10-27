@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
+
 use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection as PrimaryReadReplicaDoctrineWrapper;
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\PrimaryReadReplicaConnection;
