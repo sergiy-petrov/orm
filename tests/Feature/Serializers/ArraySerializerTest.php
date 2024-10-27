@@ -1,8 +1,9 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Serializers;
+
 use LaravelDoctrine\ORM\Serializers\Arrayable;
 use LaravelDoctrine\ORM\Serializers\ArraySerializer;
-use LaravelDoctrine\ORM\Serializers\Jsonable;
 use PHPUnit\Framework\TestCase;
 
 class ArraySerializerTest extends TestCase
