@@ -1,11 +1,14 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Testing;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup as Setup;
 use Doctrine\Persistence\ManagerRegistry;
+use Faker;
 use LaravelDoctrine\ORM\Testing\FactoryBuilder;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
