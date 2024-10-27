@@ -1,12 +1,14 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Auth\Passwords;
+
 use Carbon\Carbon;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Auth\Passwords\DoctrineTokenRepository;
+use LaravelDoctrineTest\ORM\Assets\Auth\Passwords\UserMock;
 use Mockery as m;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
@@ -236,7 +238,7 @@ class DoctrineTokenRepositoryTest extends TestCase
                       ->once()
                       ->andReturn(true);
 
-        $this->repository->delete(new UserMock);
+        $this->repository->delete(new UserMock());
 
         $this->assertTrue(true);
     }
@@ -272,28 +274,5 @@ class DoctrineTokenRepositoryTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
-    }
-}
-
-class UserMock implements CanResetPassword
-{
-    /**
-     * Get the e-mail address where password reset links are sent.
-     * @return string
-     */
-    public function getEmailForPasswordReset()
-    {
-        return 'user@mockery.mock';
-    }
-
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string $token
-     * @return void
-     */
-    public function sendPasswordResetNotification($token)
-    {
-        // TODO: Implement sendPasswordResetNotification() method.
     }
 }
