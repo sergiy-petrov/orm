@@ -536,12 +536,12 @@ class EntityManagerFactoryTest extends TestCase
             return $config;
         });
 
-        $cache = M::mock(Illuminate\Contracts\Cache\Repository::class);
+        $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
         $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
         $factory->shouldReceive('store')->with('myStoreName')->andReturn($cache);
 
-        $container->singleton(Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
             return $factory;
         });
 
@@ -594,12 +594,12 @@ class EntityManagerFactoryTest extends TestCase
             return $config;
         });
 
-        $cache = M::mock(Illuminate\Contracts\Cache\Repository::class);
+        $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
         $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
         $factory->shouldReceive('store')->with('redis')->andReturn($cache);
 
-        $container->singleton(Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
             return $factory;
         });
 
@@ -652,12 +652,12 @@ class EntityManagerFactoryTest extends TestCase
             return $config;
         });
 
-        $cache = M::mock(Illuminate\Contracts\Cache\Repository::class);
+        $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
         $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
         $factory->shouldReceive('store')->with('myStoreName')->andReturn($cache);
 
-        $container->singleton(Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
             return $factory;
         });
 
