@@ -1,10 +1,15 @@
 <?php
 
-use Doctrine\ORM\AbstractQuery;
+namespace LaravelDoctrineTest\ORM\Feature\Validation;
+
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use InvalidArgumentException;
 use LaravelDoctrine\ORM\Validation\DoctrinePresenceVerifier;
+use LaravelDoctrineTest\ORM\Assets\Mock\CountableEntityMock;
 use Mockery as m;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +48,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->em       = m::mock(EntityManagerInterface::class);
         $this->registry = m::mock(ManagerRegistry::class);
         $this->builder  = m::mock(QueryBuilder::class);
-        $this->query    = m::mock(Doctrine\ORM\Query::class);
+        $this->query    = m::mock(Query::class);
 
         $this->verifier = new DoctrinePresenceVerifier(
             $this->registry
@@ -200,7 +205,7 @@ class DoctrinePresenceVerifierTest extends TestCase
             ->andReturn(null);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No Entity Manager could be found for [CountableEntityMock].');
+        $this->expectExceptionMessage('No Entity Manager could be found for [LaravelDoctrineTest\ORM\Assets\Mock\CountableEntityMock].');
 
         $this->verifier->getCount(CountableEntityMock::class, 'email', 'test@email.com');
     }
@@ -254,7 +259,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->builder->shouldReceive('where')
                       ->once();
 
-        $this->builder->shouldReceive('expr')->andReturn(new \Doctrine\ORM\Query\Expr());
+        $this->builder->shouldReceive('expr')->andReturn(new Expr());
         $this->builder->shouldReceive('in')->with("e.email", ['test@email.com']);
 
         $this->builder->shouldReceive('getQuery')
@@ -267,8 +272,4 @@ class DoctrinePresenceVerifierTest extends TestCase
     {
         m::close();
     }
-}
-
-class CountableEntityMock
-{
 }

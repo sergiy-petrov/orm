@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelDoctrineTest\ORM;
+namespace LaravelDoctrineTest\ORM\Feature;
 
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
