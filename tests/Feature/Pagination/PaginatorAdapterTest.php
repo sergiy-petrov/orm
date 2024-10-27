@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Pagination;
+
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Types;
@@ -12,14 +14,16 @@ use Doctrine\ORM\Query;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\AbstractPaginator;
 use LaravelDoctrine\ORM\Pagination\PaginatorAdapter;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class PaginatorAdapterTest extends TestCase
 {
     public function testMakesLaravelsPaginatorFromParams()
     {
         $em      = $this->mockEntityManager();
-        $query   = (new Query($em))->setDQL('SELECT f FROM Foo f');
+        $query   = (new Query($em))->setDQL('SELECT f FROM LaravelDoctrineTest\ORM\Assets\Entity\Foo f');
         $adapter = PaginatorAdapter::fromParams($query, 15, 2);
 
         $paginator = $adapter->make();
@@ -35,7 +39,7 @@ class PaginatorAdapterTest extends TestCase
         });
 
         $em      = $this->mockEntityManager();
-        $query   = (new Query($em))->setDQL('SELECT f FROM Foo f');
+        $query   = (new Query($em))->setDQL('SELECT f FROM LaravelDoctrineTest\ORM\Assets\Entity\Foo f');
         $adapter = PaginatorAdapter::fromRequest($query);
 
         $paginator = $adapter->make();
@@ -47,7 +51,7 @@ class PaginatorAdapterTest extends TestCase
     public function testQueryParametersAreProducedInUrlFromParams()
     {
         $em      = $this->mockEntityManager();
-        $query   = (new Query($em))->setDQL('SELECT f FROM Foo f');
+        $query   = (new Query($em))->setDQL('SELECT f FROM LaravelDoctrineTest\ORM\Assets\Entity\Foo f');
         $adapter = PaginatorAdapter::fromParams($query, 15, 2, false)
             ->queryParams(['foo' => 'bar']);
 
@@ -61,7 +65,7 @@ class PaginatorAdapterTest extends TestCase
     public function testQueryParametersAreProducedInUrlFromRequest()
     {
         $em      = $this->mockEntityManager();
-        $query   = (new Query($em))->setDQL('SELECT f FROM Foo f');
+        $query   = (new Query($em))->setDQL('SELECT f FROM LaravelDoctrineTest\ORM\Assets\Entity\Foo f');
         $adapter = PaginatorAdapter::fromRequest($query)
             ->queryParams(['foo' => 'bar']);
 
@@ -76,12 +80,12 @@ class PaginatorAdapterTest extends TestCase
     private function mockEntityManager()
     {
         /** @var EntityManagerInterface|\Mockery\Mock $em */
-        $em         = \Mockery::mock(EntityManagerInterface::class);
-        $config     = \Mockery::mock(Configuration::class);
-        $metadata   = \Mockery::mock(ClassMetadata::class);
-        $connection = \Mockery::mock(Connection::class);
-        $platform   = \Mockery::mock(AbstractPlatform::class);
-        $hydrator   = \Mockery::mock(AbstractHydrator::class);
+        $em         = Mockery::mock(EntityManagerInterface::class);
+        $config     = Mockery::mock(Configuration::class);
+        $metadata   = Mockery::mock(ClassMetadata::class);
+        $connection = Mockery::mock(Connection::class);
+        $platform   = Mockery::mock(AbstractPlatform::class);
+        $hydrator   = Mockery::mock(AbstractHydrator::class);
 
         $config->shouldReceive('getDefaultQueryHints')->andReturn([]);
         $config->shouldReceive('isSecondLevelCacheEnabled')->andReturn(false);
@@ -143,18 +147,11 @@ class PaginatorAdapterTest extends TestCase
         $hydrator->shouldReceive('hydrateAll')->andReturn([]);
 
         $em->shouldReceive('getConfiguration')->andReturn($config);
-        $em->shouldReceive('getClassMetadata')->with('Foo')->andReturn($metadata);
+        $em->shouldReceive('getClassMetadata')->with('LaravelDoctrineTest\ORM\Assets\Entity\Foo')->andReturn($metadata);
         $em->shouldReceive('getConnection')->andReturn($connection);
         $em->shouldReceive('hasFilters')->andReturn(false);
         $em->shouldReceive('newHydrator')->andReturn($hydrator);
 
         return $em;
     }
-}
-
-class Foo
-{
-    private $id;
-
-    private $name;
 }

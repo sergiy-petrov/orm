@@ -1,13 +1,18 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Extensions;
+
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Contracts\Container\Container;
-use LaravelDoctrine\ORM\Extensions\Extension;
 use LaravelDoctrine\ORM\Extensions\ExtensionManager;
+use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock;
+use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock2;
+use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionWithFiltersMock;
 use Mockery as m;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
@@ -45,11 +50,6 @@ class ExtensionManagerTest extends TestCase
     protected $driver;
 
     /**
-     * @var Mock
-     */
-    protected $reader;
-
-    /**
      * @var Container|Mock
      */
     protected $container;
@@ -61,8 +61,7 @@ class ExtensionManagerTest extends TestCase
         $this->em            = m::mock(EntityManagerInterface::class);
         $this->evm           = m::mock(EventManager::class);
         $this->configuration = m::mock(Configuration::class);
-        $this->driver        = m::mock(\Doctrine\ORM\Mapping\Driver\XmlDriver::class);
-        $this->reader        = m::mock(Reader::class);
+        $this->driver        = m::mock(XmlDriver::class);
 
         $this->manager = $this->newManager();
     }
@@ -93,7 +92,7 @@ class ExtensionManagerTest extends TestCase
 
         // Should be inside booted extensions now
         $booted = $this->manager->getBootedExtensions();
-        $this->assertTrue($booted['default']['ExtensionMock']);
+        $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
     }
 
     public function test_boot_manager_with_two_managers_and_one_extension()
@@ -114,8 +113,8 @@ class ExtensionManagerTest extends TestCase
 
         // Should be inside booted extensions now
         $booted = $this->manager->getBootedExtensions();
-        $this->assertTrue($booted['default']['ExtensionMock']);
-        $this->assertTrue($booted['custom']['ExtensionMock']);
+        $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
+        $this->assertTrue((bool) $booted['custom']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
     }
 
     public function test_boot_manager_with_one_manager_and_two_extensions()
@@ -138,8 +137,8 @@ class ExtensionManagerTest extends TestCase
 
         // Should be inside booted extensions now
         $booted = $this->manager->getBootedExtensions();
-        $this->assertTrue($booted['default']['ExtensionMock']);
-        $this->assertTrue($booted['default']['ExtensionMock2']);
+        $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
+        $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock2']);
     }
 
     public function test_extension_will_only_be_booted_once()
@@ -161,7 +160,7 @@ class ExtensionManagerTest extends TestCase
 
         // Should be inside booted extensions now
         $booted = $this->manager->getBootedExtensions();
-        $this->assertTrue($booted['default']['ExtensionMock']);
+        $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
     }
 
     public function test_filters_get_registered_on_boot()
@@ -191,7 +190,8 @@ class ExtensionManagerTest extends TestCase
 
         // Should be inside booted extensions now
         $booted = $this->manager->getBootedExtensions();
-        $this->assertTrue($booted['default']['ExtensionWithFiltersMock']);
+
+        $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionWithFiltersMock']);
     }
 
     protected function tearDown(): void
@@ -204,55 +204,5 @@ class ExtensionManagerTest extends TestCase
     protected function newManager()
     {
         return new ExtensionManager($this->container);
-    }
-}
-
-class ExtensionMock implements Extension
-{
-    public function addSubscribers(EventManager $manager, EntityManagerInterface $em): void
-    {
-        // Confirm it get's called
-        (new ExtensionManagerTest)->assertTrue(true);
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getFilters(): array
-    {
-        return [];
-    }
-}
-
-class ExtensionMock2 implements Extension
-{
-    public function addSubscribers(EventManager $manager, EntityManagerInterface $em): void
-    {
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getFilters(): array
-    {
-        return [];
-    }
-}
-
-class ExtensionWithFiltersMock implements Extension
-{
-    public function addSubscribers(EventManager $manager, EntityManagerInterface $em): void
-    {
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getFilters(): array
-    {
-        return [
-            'filter'  => 'FilterMock',
-            'filter2' => 'FilterMock'
-        ];
     }
 }

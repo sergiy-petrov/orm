@@ -1,12 +1,12 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature;
+
 use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\ORM\Cache\CacheFactory;
-use Doctrine\ORM\Cache\RegionsConfiguration;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +15,7 @@ use Doctrine\ORM\Repository\RepositoryFactory;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\Container;
+use InvalidArgumentException;
 use LaravelDoctrine\ORM\Configuration\Cache\CacheManager;
 use LaravelDoctrine\ORM\Configuration\Connections\ConnectionManager;
 use LaravelDoctrine\ORM\Configuration\LaravelNamingStrategy;
@@ -24,10 +25,19 @@ use LaravelDoctrine\ORM\Loggers\Logger;
 use LaravelDoctrine\ORM\Resolvers\EntityListenerResolver;
 use LaravelDoctrine\ORM\ORMSetupResolver;
 use LaravelDoctrine\ORM\Testing\ConfigRepository;
+use LaravelDoctrineTest\ORM\Assets\AnotherListenerStub;
+use LaravelDoctrineTest\ORM\Assets\Decorator;
+use LaravelDoctrineTest\ORM\Assets\FakeConnection;
+use LaravelDoctrineTest\ORM\Assets\FakeEventManager;
+use LaravelDoctrineTest\ORM\Assets\FilterStub;
+use LaravelDoctrineTest\ORM\Assets\ListenerStub;
+use LaravelDoctrineTest\ORM\Assets\SubscriberStub;
 use Mockery as m;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
+use ReflectionException;
+use ReflectionObject;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class EntityManagerFactoryTest extends TestCase
@@ -526,12 +536,12 @@ class EntityManagerFactoryTest extends TestCase
             return $config;
         });
 
-        $cache = M::mock(Illuminate\Contracts\Cache\Repository::class);
+        $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
         $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
         $factory->shouldReceive('store')->with('myStoreName')->andReturn($cache);
 
-        $container->singleton(Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
             return $factory;
         });
 
@@ -584,12 +594,12 @@ class EntityManagerFactoryTest extends TestCase
             return $config;
         });
 
-        $cache = M::mock(Illuminate\Contracts\Cache\Repository::class);
+        $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
         $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
         $factory->shouldReceive('store')->with('redis')->andReturn($cache);
 
-        $container->singleton(Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
             return $factory;
         });
 
@@ -642,12 +652,12 @@ class EntityManagerFactoryTest extends TestCase
             return $config;
         });
 
-        $cache = M::mock(Illuminate\Contracts\Cache\Repository::class);
+        $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
         $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
         $factory->shouldReceive('store')->with('myStoreName')->andReturn($cache);
 
-        $container->singleton(Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
             return $factory;
         });
 
@@ -1207,46 +1217,4 @@ class EntityManagerFactoryTest extends TestCase
             ],
         ];
     }
-}
-
-class FakeEventManager extends \Doctrine\Common\EventManager
-{
-}
-
-class FakeConnection extends Connection
-{
-}
-
-class FilterStub extends \Doctrine\ORM\Query\Filter\SQLFilter
-{
-    public function addFilterConstraint(\Doctrine\ORM\Mapping\ClassMetadata $targetEntity, string $targetTableAlias): string
-    {
-        return '';
-    }
-}
-
-class ListenerStub
-{
-}
-
-class AnotherListenerStub
-{
-}
-
-class SubscriberStub implements EventSubscriber
-{
-    /**
-     * Returns an array of events this subscriber wants to listen to.
-     * @return array
-     */
-    public function getSubscribedEvents()
-    {
-        return [
-            'onFlush'
-        ];
-    }
-}
-
-class Decorator extends EntityManagerDecorator
-{
 }

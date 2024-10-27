@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Extensions;
+
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\DefaultFileLocator;

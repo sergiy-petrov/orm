@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
+
 use Illuminate\Contracts\Cache\Factory;
 use Illuminate\Contracts\Cache\Repository;
 use LaravelDoctrine\ORM\Configuration\Cache\ApcCacheProvider;

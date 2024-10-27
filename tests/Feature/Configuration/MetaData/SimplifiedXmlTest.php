@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
+
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use LaravelDoctrine\ORM\Configuration\MetaData\SimplifiedXml;

@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
+
 use LaravelDoctrine\ORM\Configuration\MetaData\Attributes;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Mockery as m;

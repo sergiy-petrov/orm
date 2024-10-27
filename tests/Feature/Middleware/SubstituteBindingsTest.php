@@ -1,7 +1,10 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Middleware;
+
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Events\Dispatcher;
@@ -10,6 +13,8 @@ use Illuminate\Routing\CallableDispatcher;
 use Illuminate\Routing\Contracts\CallableDispatcher as CallableDispatcherContract;
 use Illuminate\Routing\Router;
 use LaravelDoctrine\ORM\Middleware\SubstituteBindings;
+use LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntity;
+use LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntityWithInterface;
 use Mockery as m;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +40,7 @@ class SubstituteBindingsTest extends TestCase
     {
         $this->registry     = m::mock(ManagerRegistry::class);
         $this->em           = m::mock(EntityManager::class);
-        $this->repository   = m::mock(\Doctrine\Persistence\ObjectRepository::class);
+        $this->repository   = m::mock(ObjectRepository::class);
     }
 
     protected function getRouter()
@@ -57,7 +62,7 @@ class SubstituteBindingsTest extends TestCase
 
     protected function mockRegistry()
     {
-        $this->registry->shouldReceive('getRepository')->once()->with('BindableEntity')->andReturn($this->repository);
+        $this->registry->shouldReceive('getRepository')->once()->with('LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntity')->andReturn($this->repository);
     }
 
     public function test_entity_binding()
@@ -65,7 +70,7 @@ class SubstituteBindingsTest extends TestCase
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@returnEntityName',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@returnEntityName',
         ]);
 
         $this->mockRegistry();
@@ -85,7 +90,7 @@ class SubstituteBindingsTest extends TestCase
 
         $router->get('foo/{entity}', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@returnEntityName',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@returnEntityName',
         ]);
 
         $this->mockRegistry();
@@ -99,7 +104,7 @@ class SubstituteBindingsTest extends TestCase
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@returnEntity',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@returnEntity',
         ]);
 
         $this->mockRegistry();
@@ -113,14 +118,14 @@ class SubstituteBindingsTest extends TestCase
         $router = $this->getRouter();
         $router->get('foo/{value}', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@returnValue',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@returnValue',
         ]);
 
         $this->assertEquals(123456, $router->dispatch(Request::create('foo/123456', 'GET'))->getContent());
 
         $router->get('doc/trine', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@checkRequest',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@checkRequest',
         ]);
 
         $this->assertEquals('request', $router->dispatch(Request::create('doc/trine', 'GET'))->getContent());
@@ -130,7 +135,7 @@ class SubstituteBindingsTest extends TestCase
     {
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
-            'uses'       => 'EntityController@index',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@index',
             'middleware' => SubstituteBindings::class,
         ]);
 
@@ -147,11 +152,11 @@ class SubstituteBindingsTest extends TestCase
     {
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
-            'uses'       => 'EntityController@interfacer',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@interfacer',
             'middleware' => SubstituteBindings::class,
         ]);
 
-        $this->registry->shouldReceive('getRepository')->once()->with('BindableEntityWithInterface')->andReturn($this->repository);
+        $this->registry->shouldReceive('getRepository')->once()->with('LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntityWithInterface')->andReturn($this->repository);
         $entity       = new BindableEntityWithInterface();
         $entity->id   = 1;
         $entity->name = 'NAMEVALUE';
@@ -165,7 +170,7 @@ class SubstituteBindingsTest extends TestCase
         $router = $this->getRouter();
         $router->get('foo/{value}', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@returnValue',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@returnValue',
         ]);
 
         $this->assertEquals('test', $router->dispatch(Request::create('foo/test', 'GET'))->getContent());
@@ -173,14 +178,14 @@ class SubstituteBindingsTest extends TestCase
         $router = $this->getRouter();
         $router->get('bar/{value}', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@returnValue',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@returnValue',
         ]);
 
         $this->assertEquals(123456, $router->dispatch(Request::create('bar/123456', 'GET'))->getContent());
 
         $router->get('doc/trine', [
             'middleware' => SubstituteBindings::class,
-            'uses'       => 'EntityController@checkRequest',
+            'uses'       => 'LaravelDoctrineTest\ORM\Assets\Middleware\EntityController@checkRequest',
         ]);
 
         $this->assertEquals('request', $router->dispatch(Request::create('doc/trine', 'GET'))->getContent());
@@ -189,74 +194,5 @@ class SubstituteBindingsTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
-    }
-}
-
-class BindableEntity
-{
-    public $id;
-
-    public $name;
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getName()
-    {
-        return strtolower($this->name);
-    }
-}
-
-class BindableEntityWithInterface implements \LaravelDoctrine\ORM\Contracts\UrlRoutable
-{
-    public $id;
-
-    public $name;
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getName()
-    {
-        return strtolower($this->name);
-    }
-
-    public static function getRouteKeyNameStatic(): string
-    {
-        return 'name';
-    }
-}
-
-class EntityController
-{
-    public function index(BindableEntity $entity)
-    {
-        return $entity->getName();
-    }
-
-    public function interfacer(BindableEntityWithInterface $entity)
-    {
-        return $entity->getId();
-    }
-
-    public function returnValue(string $value)
-    {
-        return $value;
-    }
-
-    public function returnEntity(BindableEntity $entity = null) {
-        return $entity;
-    }
-
-    public function returnEntityName(BindableEntity $entity) {
-        return $entity->getName();
-    }
-
-    public function checkRequest(Request $request) {
-        return $request instanceof Request ? 'request' : 'something else';
     }
 }

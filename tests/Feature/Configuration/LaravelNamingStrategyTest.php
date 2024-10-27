@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Configuration;
+
 use Illuminate\Support\Str;
 use LaravelDoctrine\ORM\Configuration\LaravelNamingStrategy;
 use PHPUnit\Framework\TestCase;

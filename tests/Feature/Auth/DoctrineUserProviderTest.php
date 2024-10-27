@@ -1,11 +1,13 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Auth;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Hashing\Hasher;
-use LaravelDoctrine\ORM\Auth\Authenticatable;
 use LaravelDoctrine\ORM\Auth\DoctrineUserProvider;
+use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableMock;
+use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableWithNonEmptyConstructorMock;
 use Mockery as m;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
@@ -168,7 +170,7 @@ class DoctrineUserProviderTest extends TestCase
 
     public function test_rehash_password_if_required_rehash_norehash_needed()
     {
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
         $user->setPassword('originalPassword');
 
         $this->hasher->shouldReceive('needsRehash')->once()->andReturn(false);
@@ -187,25 +189,5 @@ class DoctrineUserProviderTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
-    }
-}
-
-class AuthenticableMock implements AuthenticatableContract
-{
-    use Authenticatable;
-
-    public function __construct()
-    {
-        $this->password = 'myPassword';
-    }
-}
-
-class AuthenticableWithNonEmptyConstructorMock implements AuthenticatableContract
-{
-    use Authenticatable;
-
-    public function __construct(array $passwords)
-    {
-        $this->password = $passwords[0];
     }
 }

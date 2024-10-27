@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
+
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Illuminate\Contracts\Container\Container;
 use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;

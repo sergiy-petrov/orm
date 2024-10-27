@@ -1,5 +1,7 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Serializers;
+
 use LaravelDoctrine\ORM\Serializers\Jsonable;
 use LaravelDoctrine\ORM\Serializers\JsonSerializer;
 use PHPUnit\Framework\TestCase;

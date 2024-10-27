@@ -1,9 +1,12 @@
 <?php
 
+namespace LaravelDoctrineTest\ORM\Feature\Testing\Concerns;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Contracts\Container\Container;
 use LaravelDoctrine\ORM\Testing\Concerns\InteractsWithEntities;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\ExpectationFailedException;
 
