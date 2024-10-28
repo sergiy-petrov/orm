@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Serializers;
 
 use LaravelDoctrine\ORM\Serializers\Arrayable;
@@ -8,23 +10,25 @@ class ArrayableEntity
 {
     use Arrayable;
 
-    protected $id = 'IDVALUE';
+    protected string $id = 'IDVALUE';
 
-    protected $name = 'NAMEVALUE';
+    protected string $name = 'NAMEVALUE';
 
-    protected $list = ['item1', 'item2'];
+    /** @var array|string[] */
+    protected array $list = ['item1', 'item2'];
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getList()
+    /** @return array|string[] */
+    public function getList(): array
     {
         return $this->list;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Serializers;
 
 use LaravelDoctrine\ORM\Serializers\Jsonable;
@@ -8,23 +10,23 @@ class JsonableEntity
 {
     use Jsonable;
 
-    protected $id = 'IDVALUE';
+    protected string $id = 'IDVALUE';
 
-    protected $name = 'NAMEVALUE';
+    protected string $name = 'NAMEVALUE';
 
-    protected $numeric = "1";
+    protected string $numeric = '1';
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getNumeric()
+    public function getNumeric(): string
     {
         return $this->numeric;
     }

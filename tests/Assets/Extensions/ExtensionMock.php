@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Extensions;
 
 use Doctrine\Common\EventManager;
@@ -15,9 +17,7 @@ class ExtensionMock implements Extension
         (new ExtensionManagerTest())->assertTrue(true);
     }
 
-    /**
-     * @return mixed[]
-     */
+    /** @return mixed[] */
     public function getFilters(): array
     {
         return [];

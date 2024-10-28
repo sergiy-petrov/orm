@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Extensions;
 
 use Doctrine\Common\EventManager;
@@ -12,9 +14,7 @@ class ExtensionMock2 implements Extension
     {
     }
 
-    /**
-     * @return mixed[]
-     */
+    /** @return mixed[] */
     public function getFilters(): array
     {
         return [];
