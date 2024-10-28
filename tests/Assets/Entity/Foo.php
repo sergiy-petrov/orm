@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Entity;
 
 class Foo
 {
-    private $id;
+    private int $id;
 
-    private $name;
+    private string $name;
 }
