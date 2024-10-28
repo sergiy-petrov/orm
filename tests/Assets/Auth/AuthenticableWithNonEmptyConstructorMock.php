@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -9,6 +11,7 @@ class AuthenticableWithNonEmptyConstructorMock implements AuthenticatableContrac
 {
     use Authenticatable;
 
+    /** @param string[] $passwords */
     public function __construct(array $passwords)
     {
         $this->password = $passwords[0];

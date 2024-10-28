@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
