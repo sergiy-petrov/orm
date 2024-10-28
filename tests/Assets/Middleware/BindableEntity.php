@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Middleware;
+
+use function strtolower;
 
 class BindableEntity
 {
-    public $id;
+    public int $id;
 
-    public $name;
+    public string $name;
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return strtolower($this->name);
     }

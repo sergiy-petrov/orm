@@ -1,21 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets\Middleware;
 
 use LaravelDoctrine\ORM\Contracts\UrlRoutable;
 
+use function strtolower;
+
 class BindableEntityWithInterface implements UrlRoutable
 {
-    public $id;
+    public int $id;
 
-    public $name;
+    public string $name;
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return strtolower($this->name);
     }
