@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Testing\Concerns;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,8 +16,8 @@ class InteractsWithEntitiesTest extends MockeryTestCase
 {
     use InteractsWithEntities;
 
-    protected $em;
-    protected $app;
+    protected EntityManagerInterface $em;
+    protected Container $app;
 
     public function setUp(): void
     {
@@ -30,7 +32,7 @@ class InteractsWithEntitiesTest extends MockeryTestCase
         parent::setUp();
     }
 
-    public function testEntitiesMatchWithMatch()
+    public function testEntitiesMatchWithMatch(): void
     {
         $repository = Mockery::mock(EntityRepository::class);
         $repository->expects('findBy')
@@ -46,7 +48,7 @@ class InteractsWithEntitiesTest extends MockeryTestCase
         $this->entitiesMatch('SomeClass', ['someField' => 'someValue']);
     }
 
-    public function testEntitiesMatchWithoutMatch()
+    public function testEntitiesMatchWithoutMatch(): void
     {
         $repository = Mockery::mock(EntityRepository::class);
         $repository->expects('findBy')
@@ -63,7 +65,7 @@ class InteractsWithEntitiesTest extends MockeryTestCase
         $this->entitiesMatch('SomeClass', ['someField' => 'someValue']);
     }
 
-    public function testNoEntitiesMatchWithMatch()
+    public function testNoEntitiesMatchWithMatch(): void
     {
         $repository = Mockery::mock(EntityRepository::class);
         $repository->expects('findBy')
@@ -80,7 +82,7 @@ class InteractsWithEntitiesTest extends MockeryTestCase
         $this->noEntitiesMatch('SomeClass', ['someField' => 'someValue']);
     }
 
-    public function testNoEntitiesMatchWithoutMatch()
+    public function testNoEntitiesMatchWithoutMatch(): void
     {
         $repository = Mockery::mock(EntityRepository::class);
         $repository->expects('findBy')
