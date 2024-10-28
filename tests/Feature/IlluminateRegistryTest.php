@@ -1,36 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature;
 
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use LaravelDoctrine\ORM\EntityManagerFactory;
 use LaravelDoctrine\ORM\IlluminateRegistry;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 use RuntimeException;
 use stdClass;
+use Throwable;
 
 class IlluminateRegistryTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $container;
+    protected Container $container;
 
-    /**
-     * @var Mock
-     */
-    protected $factory;
+    protected EntityManagerFactory $factory;
 
-    /**
-     * @var IlluminateRegistry
-     */
-    protected $registry;
+    protected IlluminateRegistry $registry;
 
     protected function setUp(): void
     {
@@ -39,13 +35,13 @@ class IlluminateRegistryTest extends TestCase
 
         $this->registry = new IlluminateRegistry(
             $this->container,
-            $this->factory
+            $this->factory,
         );
 
         parent::setUp();
     }
 
-    public function test_can_add_manager()
+    public function testCanAddManager(): void
     {
         $this->container->shouldReceive('singleton')->twice();
         $this->registry->addManager('default', ['settings']);
@@ -53,7 +49,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertTrue($this->registry->managerExists('default'));
     }
 
-    public function test_can_add_connection()
+    public function testCanAddConnection(): void
     {
         $this->container->shouldReceive('singleton')->once();
         $this->registry->addConnection('default');
@@ -61,7 +57,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertTrue($this->registry->connectionExists('default'));
     }
 
-    public function testCanAddDefaultManager()
+    public function testCanAddDefaultManager(): void
     {
         $this->container->shouldReceive('singleton')->times(4);
         $this->registry->addManager('default', ['settings']);
@@ -72,7 +68,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals('second', $this->registry->getDefaultManagerName());
     }
 
-    public function testCanAddDefaultConnection()
+    public function testCanAddDefaultConnection(): void
     {
         $this->container->shouldReceive('singleton')->twice();
         $this->registry->addConnection('default');
@@ -82,7 +78,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals('second', $this->registry->getDefaultConnectionName());
     }
 
-    public function test_get_default_connection_name()
+    public function testGetDefaultConnectionName(): void
     {
         // Will return first, when no default name
         $this->container->shouldReceive('singleton')->once();
@@ -95,7 +91,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals('default', $this->registry->getDefaultConnectionName());
     }
 
-    public function test_get_default_manager_name()
+    public function testGetDefaultManagerName(): void
     {
         // Will return first, when no default name
         $this->container->shouldReceive('singleton')->times(3);
@@ -108,7 +104,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals('default', $this->registry->getDefaultManagerName());
     }
 
-    public function test_can_get_default_connection()
+    public function testCanGetDefaultConnection(): void
     {
         $this->container->shouldReceive('singleton')->once();
         $this->registry->addConnection('default');
@@ -121,7 +117,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals($this->registry->getConnection('default'), $this->registry->getConnection());
     }
 
-    public function test_can_get_custom_connection()
+    public function testCanGetCustomConnection(): void
     {
         $this->container->shouldReceive('singleton')->once();
         $this->registry->addConnection('custom');
@@ -133,7 +129,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals('connection', $this->registry->getConnection('custom'));
     }
 
-    public function test_cannot_non_existing_connection()
+    public function testCannotNonExistingConnection(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Doctrine Connection named "non-existing" does not exist.');
@@ -141,7 +137,7 @@ class IlluminateRegistryTest extends TestCase
         $this->registry->getConnection('non-existing');
     }
 
-    public function test_connection_gets_only_resolved_once()
+    public function testConnectionGetsOnlyResolvedOnce(): void
     {
         $this->container->shouldReceive('singleton')->once();
         $this->registry->addConnection('default');
@@ -159,7 +155,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals($this->registry->getConnection('default'), $this->registry->getConnection());
     }
 
-    public function test_can_check_if_connection_exists()
+    public function testCanCheckIfConnectionExists(): void
     {
         $this->container->shouldReceive('singleton')->once();
         $this->registry->addConnection('default');
@@ -168,7 +164,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertTrue($this->registry->connectionExists('default'));
     }
 
-    public function test_can_get_connection_names()
+    public function testCanGetConnectionNames(): void
     {
         $this->container->shouldReceive('singleton')->twice();
 
@@ -180,7 +176,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertContains('custom', $this->registry->getConnectionNames());
     }
 
-    public function test_can_get_all_connections()
+    public function testCanGetAllConnections(): void
     {
         $this->container->shouldReceive('singleton')->twice();
 
@@ -202,7 +198,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertContains('connection2', $connections);
     }
 
-    public function test_can_get_default_manager()
+    public function testCanGetDefaultManager(): void
     {
         $this->container->shouldReceive('singleton')->times(2);
         $this->registry->addManager('default');
@@ -215,7 +211,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals($this->registry->getManager('default'), $this->registry->getManager());
     }
 
-    public function test_can_get_custom_manager()
+    public function testCanGetCustomManager(): void
     {
         $this->container->shouldReceive('singleton')->times(2);
         $this->registry->addManager('custom');
@@ -227,7 +223,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals('connection', $this->registry->getManager('custom'));
     }
 
-    public function test_cannot_non_existing_manager()
+    public function testCannotNonExistingManager(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Doctrine Manager named "non-existing" does not exist.');
@@ -235,7 +231,7 @@ class IlluminateRegistryTest extends TestCase
         $this->registry->getManager('non-existing');
     }
 
-    public function test_manager_gets_only_resolved_once()
+    public function testManagerGetsOnlyResolvedOnce(): void
     {
         $this->container->shouldReceive('singleton')->times(2);
         $this->registry->addManager('default');
@@ -253,7 +249,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals($this->registry->getManager('default'), $this->registry->getManager());
     }
 
-    public function test_can_check_if_manager_exists()
+    public function testCanCheckIfManagerExists(): void
     {
         $this->container->shouldReceive('singleton')->times(2);
         $this->registry->addManager('default');
@@ -262,7 +258,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertTrue($this->registry->managerExists('default'));
     }
 
-    public function test_can_get_manager_names()
+    public function testCanGetManagerNames(): void
     {
         $this->container->shouldReceive('singleton')->times(4);
 
@@ -274,7 +270,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertContains('custom', $this->registry->getManagerNames());
     }
 
-    public function test_can_get_all_managers()
+    public function testCanGetAllManagers(): void
     {
         $this->container->shouldReceive('singleton')->times(4);
 
@@ -296,7 +292,7 @@ class IlluminateRegistryTest extends TestCase
         $this->assertContains('manager2', $managers);
     }
 
-    public function test_can_purge_default_manager()
+    public function testCanPurgeDefaultManager(): void
     {
         $this->container->shouldReceive('singleton');
         $this->registry->addManager('default');
@@ -304,13 +300,13 @@ class IlluminateRegistryTest extends TestCase
         $this->container->shouldReceive('forgetInstance', 'doctrine.managers.default');
         $this->container->shouldReceive('make')
             ->with('doctrine.managers.default')
-            ->andReturn(m::mock(\Doctrine\Persistence\ObjectManager::class));
+            ->andReturn(m::mock(ObjectManager::class));
 
         $this->registry->purgeManager();
         $this->assertFalse($this->registry->managerExists('default'));
     }
 
-    public function test_can_reset_default_manager()
+    public function testCanResetDefaultManager(): void
     {
         $this->container->shouldReceive('singleton');
         $this->registry->addManager('default');
@@ -318,15 +314,15 @@ class IlluminateRegistryTest extends TestCase
         $this->container->shouldReceive('forgetInstance', 'doctrine.managers.default');
         $this->container->shouldReceive('make')
             ->with('doctrine.managers.default')
-            ->andReturn(m::mock(\Doctrine\Persistence\ObjectManager::class));
+            ->andReturn(m::mock(ObjectManager::class));
 
         $manager = $this->registry->resetManager();
 
-        $this->assertInstanceOf(\Doctrine\Persistence\ObjectManager::class, $manager);
+        $this->assertInstanceOf(ObjectManager::class, $manager);
         $this->assertSame($manager, $this->registry->getManager());
     }
 
-    public function test_can_purge_custom_manager()
+    public function testCanPurgeCustomManager(): void
     {
         $this->container->shouldReceive('singleton');
         $this->registry->addManager('custom');
@@ -334,13 +330,13 @@ class IlluminateRegistryTest extends TestCase
         $this->container->shouldReceive('forgetInstance', 'doctrine.managers.custom');
         $this->container->shouldReceive('make')
             ->with('doctrine.managers.custom')
-            ->andReturn(m::mock(\Doctrine\Persistence\ObjectManager::class));
+            ->andReturn(m::mock(ObjectManager::class));
 
         $this->registry->purgeManager();
         $this->assertFalse($this->registry->managerExists('custom'));
     }
 
-    public function test_can_reset_custom_manager()
+    public function testCanResetCustomManager(): void
     {
         $this->container->shouldReceive('singleton');
         $this->registry->addManager('custom');
@@ -348,15 +344,15 @@ class IlluminateRegistryTest extends TestCase
         $this->container->shouldReceive('forgetInstance', 'doctrine.managers.custom');
         $this->container->shouldReceive('make')
             ->with('doctrine.managers.custom')
-            ->andReturn(m::mock(\Doctrine\Persistence\ObjectManager::class));
+            ->andReturn(m::mock(ObjectManager::class));
 
         $manager = $this->registry->resetManager('custom');
 
-        $this->assertInstanceOf(\Doctrine\Persistence\ObjectManager::class, $manager);
+        $this->assertInstanceOf(ObjectManager::class, $manager);
         $this->assertSame($manager, $this->registry->getManager('custom'));
     }
 
-    public function test_cannot_purge_non_existing_managers()
+    public function testCannotPurgetNonExistingManagers(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Doctrine Manager named "non-existing" does not exist.');
@@ -364,7 +360,7 @@ class IlluminateRegistryTest extends TestCase
         $this->registry->purgeManager('non-existing');
     }
 
-    public function test_cannot_reset_non_existing_managers()
+    public function testCannotResetNonExistingManagers(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Doctrine Manager named "non-existing" does not exist.');
@@ -372,15 +368,15 @@ class IlluminateRegistryTest extends TestCase
         $this->registry->resetManager('non-existing');
     }
 
-    public function test_get_alias_namespace_from_unknown_namespace()
+    public function testGetAliasNamespaceFromUnkownNamespace(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(Throwable::class);
         $this->expectExceptionMessage('Namespace "Alias" not found');
 
         $this->registry->getAliasNamespace('Alias');
     }
 
-    public function test_get_alias_namespace()
+    public function testGetAliasNamespace(): void
     {
         $this->container->shouldReceive('singleton');
         $this->registry->addManager('default');
@@ -408,7 +404,7 @@ class IlluminateRegistryTest extends TestCase
             ->with('doctrine.managers.default')
             ->andReturn($entityManager);
 
-        $repository = m::mock(\Doctrine\ORM\EntityRepository::class);
+        $repository = m::mock(EntityRepository::class);
 
         $entityManager->shouldReceive('getRepository')
             ->with('App:Entity')
@@ -428,13 +424,13 @@ class IlluminateRegistryTest extends TestCase
             ->with('doctrine.managers.default')
             ->andReturn($entityManager);
 
-        $metadataFactory = m::mock(\Doctrine\ORM\Mapping\ClassMetadataFactory::class);
+        $metadataFactory = m::mock(ClassMetadataFactory::class);
         $metadataFactory->shouldReceive('isTransient')
             ->with('LaravelDoctrineTest\ORM\Assets\Entity\Scientist')
             ->once()
             ->andReturnFalse();
 
-        $metadata = m::mock(\Doctrine\Persistence\Mapping\ClassMetadata::class);
+        $metadata = m::mock(ClassMetadata::class);
         $metadata->shouldReceive('getName')
             ->once()
             ->andReturn('LaravelDoctrineTest\ORM\Assets\Entity\Scientist');
@@ -468,14 +464,13 @@ class IlluminateRegistryTest extends TestCase
 
         $entityManager->shouldReceive('getConfiguration')->andReturn($configuration);
 
-
-        $metadataFactory = m::mock(\Doctrine\ORM\Mapping\ClassMetadataFactory::class);
+        $metadataFactory = m::mock(ClassMetadataFactory::class);
         $metadataFactory->shouldReceive('isTransient')
             ->with('LaravelDoctrineTest\ORM\Assets\Entity\Scientist')
             ->once()
             ->andReturnFalse();
 
-        $metadata = m::mock(\Doctrine\Persistence\Mapping\ClassMetadata::class);
+        $metadata = m::mock(ClassMetadata::class);
         $metadata->shouldReceive('getName')
             ->once()
             ->andReturn('LaravelDoctrineTest\ORM\Assets\Entity\Scientist');
@@ -502,13 +497,13 @@ class IlluminateRegistryTest extends TestCase
             ->with('doctrine.managers.default')
             ->andReturn($entityManager);
 
-        $metadataFactory = m::mock(\Doctrine\ORM\Mapping\ClassMetadataFactory::class);
+        $metadataFactory = m::mock(ClassMetadataFactory::class);
         $metadataFactory->shouldReceive('isTransient')
             ->with('LaravelDoctrineTest\ORM\Assets\Entity\Scientist')
             ->once()
             ->andReturnFalse();
 
-        $metadata = m::mock(\Doctrine\Persistence\Mapping\ClassMetadata::class);
+        $metadata = m::mock(ClassMetadata::class);
         $metadata->shouldReceive('getName')
             ->once()
             ->andReturn('LaravelDoctrineTest\ORM\Assets\Entity\Theory');
@@ -525,7 +520,7 @@ class IlluminateRegistryTest extends TestCase
 
     public function testGetManagerForClassInvalidClass(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->container->shouldReceive('singleton');
         $this->registry->addManager('default');
@@ -541,7 +536,7 @@ class IlluminateRegistryTest extends TestCase
     /**
      * Verify that getManager() returns a new instance after a call to resetManager().
      */
-    public function test_get_manager_after_reset_should_return_new_manager()
+    public function testGetManagerAfterResetShouldReturnNewManager(): void
     {
         $this->container->shouldReceive('singleton');
         $this->registry->addManager('default');
