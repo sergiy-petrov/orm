@@ -201,6 +201,8 @@ class ExtensionManagerTest extends TestCase
         m::close();
 
         $this->manager = $this->newManager();
+
+        parent::tearDown();
     }
 
     protected function newManager()

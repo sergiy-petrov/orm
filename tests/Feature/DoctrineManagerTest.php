@@ -187,6 +187,8 @@ class DoctrineManagerTest extends TestCase
     {
         m::close();
         BootChain::flush();
+
+        parent::tearDown();
     }
 
     public function assertExtendedCorrectly($configuration, $connection, $eventManager)

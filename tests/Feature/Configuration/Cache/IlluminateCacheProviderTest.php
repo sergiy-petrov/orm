@@ -63,5 +63,7 @@ class IlluminateCacheProviderTest extends TestCase
     public function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }
