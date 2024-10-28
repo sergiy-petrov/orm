@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Serializers;
 
 use LaravelDoctrine\ORM\Serializers\ArraySerializer;
@@ -8,19 +10,16 @@ use LaravelDoctrineTest\ORM\TestCase;
 
 class ArraySerializerTest extends TestCase
 {
-    /**
-     * @var ArraySerializer
-     */
-    protected $serializer;
+    protected ArraySerializer $serializer;
 
     protected function setUp(): void
     {
-        $this->serializer = new ArraySerializer;
+        $this->serializer = new ArraySerializer();
 
         parent::setUp();
     }
 
-    public function test_can_serialize_to_array()
+    public function testCanSerializeToArray(): void
     {
         $arrayableEntity = new ArrayableEntity();
 
@@ -31,7 +30,7 @@ class ArraySerializerTest extends TestCase
         $this->assertEquals([
             'id'   => 'IDVALUE',
             'name' => 'NAMEVALUE',
-            'list' => ['item1', 'item2']
+            'list' => ['item1', 'item2'],
         ], $array);
     }
 }
