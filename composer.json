@@ -34,21 +34,22 @@
         "symfony/cache": "^6.0|^7.0",
         "symfony/serializer": "^5.0|^6.0|^7.0"
     },
-    "conflict": {
-        "laravel/lumen": "*"
-    },
     "require-dev": {
         "doctrine/coding-standard": "^12.0",
-        "illuminate/log": "^10.0|^11.0",
-        "illuminate/notifications": "^10.0|^11.0",
-        "illuminate/queue": "^10.0|^11.0",
+        "illuminate/log": "^10.0 || ^11.0",
+        "illuminate/notifications": "^10.0 || ^11.0",
+        "illuminate/queue": "^10.0 || ^11.0",
         "mockery/mockery": "^1.6.12",
         "nikic/php-parser": "^4.19 || ^5.0",
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpstan/phpstan": "^1.9",
         "phpstan/phpstan-deprecation-rules": "^1.1",
         "phpunit/phpunit": "^9.3",
-        "fakerphp/faker": "^1.23"
+        "fakerphp/faker": "^1.23",
+        "laravel/framework": "^10.0 || ^11.0"
+    },
+    "conflict": {
+        "laravel/lumen": "*"
     },
     "autoload": {
         "psr-4": {
@@ -61,13 +62,7 @@
     "autoload-dev": {
         "psr-4": {
             "LaravelDoctrineTest\\ORM\\": "tests/"
-        },
-        "files": [
-            "tests/helpers.php"
-        ],
-        "classmap": [
-            "tests"
-        ]
+        }
     },
     "suggest": {
         "fzaninotto/faker": "Required to use the entity factory builder (~1.4).",
