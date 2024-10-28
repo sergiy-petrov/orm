@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Assets;
 
 use Doctrine\Common\EventManager;
@@ -15,4 +17,3 @@ class MyDoctrineExtender implements DoctrineExtender
         (new DoctrineManagerTest())->assertExtendedCorrectly($configuration, $connection, $eventManager);
     }
 }
-
