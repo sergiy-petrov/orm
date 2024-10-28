@@ -38,6 +38,7 @@ use LaravelDoctrineTest\ORM\Assets\SubscriberStub;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionException;
 use ReflectionObject;
@@ -1072,9 +1073,8 @@ class EntityManagerFactoryTest extends TestCase
      * Check if config is handled correctly.
      *
      * @param mixed[] $inputConfig
-     *
-     * @dataProvider getTestPrimaryReadReplicaConnectionData
      */
+    #[DataProvider('getTestPrimaryReadReplicaConnectionData')]
     public function testPrimaryReadReplicaConnection(
         array $inputConfig,
         string $expectedException = '',

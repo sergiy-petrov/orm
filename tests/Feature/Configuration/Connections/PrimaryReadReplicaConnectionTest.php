@@ -10,6 +10,7 @@ use LaravelDoctrine\ORM\Configuration\Connections\PrimaryReadReplicaConnection;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use function class_exists;
 
 /**
@@ -93,9 +94,8 @@ class PrimaryReadReplicaConnectionTest extends TestCase
      * @param mixed[] $resolvedBaseSettings
      * @param mixed[] $settings
      * @param mixed[] $expectedOutput
-     *
-     * @dataProvider getPrimaryReplicaConnectionData
      */
+    #[DataProvider('getPrimaryReplicaConnectionData')]
     public function testPrimaryReplicaConnection(array $resolvedBaseSettings, array $settings, array $expectedOutput): void
     {
         $this->assertEquals(
