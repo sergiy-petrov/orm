@@ -41,6 +41,8 @@ class SubstituteBindingsTest extends TestCase
         $this->registry     = m::mock(ManagerRegistry::class);
         $this->em           = m::mock(EntityManager::class);
         $this->repository   = m::mock(ObjectRepository::class);
+
+        parent::setUp();
     }
 
     protected function getRouter()

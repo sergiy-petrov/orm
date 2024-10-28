@@ -25,6 +25,8 @@ class SqliteConnectionTest extends TestCase
         $this->config = m::mock(Repository::class);
 
         $this->connection = new SqliteConnection($this->config);
+
+        parent::setUp();
     }
 
     public function test_can_resolve()

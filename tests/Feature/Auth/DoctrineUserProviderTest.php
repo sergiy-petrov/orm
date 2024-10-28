@@ -55,6 +55,8 @@ class DoctrineUserProviderTest extends TestCase
             $this->em,
             AuthenticableWithNonEmptyConstructorMock::class
         );
+
+        parent::setUp();
     }
 
     public function test_can_retrieve_by_id()

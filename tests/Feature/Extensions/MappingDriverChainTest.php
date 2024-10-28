@@ -30,6 +30,8 @@ class MappingDriverChainTest extends TestCase
     {
         $this->driver = m::mock(XmlDriver::class);
         $this->chain  = new MappingDriverChain($this->driver, 'Namespace');
+
+        parent::setUp();
     }
 
     public function test_get_default_driver()

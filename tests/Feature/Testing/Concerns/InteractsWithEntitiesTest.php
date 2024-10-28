@@ -26,6 +26,8 @@ class InteractsWithEntitiesTest extends MockeryTestCase
             ->allows('make')
             ->with('em')
             ->andReturn($this->em);
+
+        parent::setUp();
     }
 
     public function testEntitiesMatchWithMatch()

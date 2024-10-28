@@ -26,6 +26,8 @@ class EntityListenerResolverTest extends TestCase
     {
         $this->container = m::mock(Container::class);
         $this->resolver  = new EntityListenerResolver($this->container);
+
+        parent::setUp();
     }
 
     protected function tearDown(): void

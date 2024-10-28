@@ -130,6 +130,8 @@ class EntityManagerFactoryTest extends TestCase
             $this->config,
             $this->listenerResolver
         );
+
+        parent::setUp();
     }
 
     protected function assertEntityManager(EntityManagerInterface $manager)

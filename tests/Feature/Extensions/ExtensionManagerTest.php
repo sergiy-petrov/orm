@@ -64,6 +64,8 @@ class ExtensionManagerTest extends TestCase
         $this->driver        = m::mock(XmlDriver::class);
 
         $this->manager = $this->newManager();
+
+        parent::setUp();
     }
 
     public function test_register_extension()

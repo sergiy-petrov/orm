@@ -54,6 +54,8 @@ class DoctrineManagerTest extends TestCase
         $this->manager = new DoctrineManager(
             $this->container
         );
+
+        parent::setUp();
     }
 
     public function test_can_extend_doctrine_on_existing_connection_with_callback()

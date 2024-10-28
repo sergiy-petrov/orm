@@ -18,6 +18,8 @@ class SimplifiedXmlTest extends TestCase
     protected function setUp(): void
     {
         $this->meta = new SimplifiedXml();
+
+        parent::setUp();
     }
 
     public function test_can_resolve()

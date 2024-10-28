@@ -66,6 +66,8 @@ class DoctrineTokenRepositoryTest extends TestCase
             'hashkey',
             60
         );
+
+        parent::setUp();
     }
 
     public function test_can_create_a_token()

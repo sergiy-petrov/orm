@@ -16,6 +16,8 @@ class JsonSerializerTest extends TestCase
     protected function setUp(): void
     {
         $this->serializer = new JsonSerializer;
+
+        parent::setUp();
     }
 
     public function test_can_serialize_to_json()

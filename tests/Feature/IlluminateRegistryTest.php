@@ -41,6 +41,8 @@ class IlluminateRegistryTest extends TestCase
             $this->container,
             $this->factory
         );
+
+        parent::setUp();
     }
 
     public function test_can_add_manager()

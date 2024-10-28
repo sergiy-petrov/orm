@@ -29,6 +29,8 @@ class MetaDataManagerTest extends TestCase
         $this->manager = new MetaDataManager(
             $this->app
         );
+
+        parent::setUp();
     }
 
     public function test_driver_returns_the_default_driver()

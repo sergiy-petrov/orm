@@ -74,6 +74,8 @@ class FactoryBuilderTest extends MockeryTestCase
 
         $this->entityManager->shouldReceive('persist');
         $this->entityManager->shouldReceive('flush');
+
+        parent::setUp();
     }
 
     protected function getFactoryBuilder(array $definitions = [], array $states = [], array $afterMaking = [], array $afterCreating = []): FactoryBuilder

@@ -25,6 +25,8 @@ class PgsqlConnectionTest extends TestCase
         $this->config = m::mock(Repository::class);
 
         $this->connection = new PgsqlConnection($this->config);
+
+        parent::setUp();
     }
 
     public function test_can_resolve()

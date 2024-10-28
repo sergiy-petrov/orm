@@ -53,6 +53,8 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->verifier = new DoctrinePresenceVerifier(
             $this->registry
         );
+
+        parent::setUp();
     }
 
     public function test_can_get_count()

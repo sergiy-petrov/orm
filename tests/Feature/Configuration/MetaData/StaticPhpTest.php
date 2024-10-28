@@ -18,6 +18,8 @@ class StaticPhpTest extends TestCase
     protected function setUp(): void
     {
         $this->meta = new StaticPhp();
+
+        parent::setUp();
     }
 
     public function test_can_resolve()

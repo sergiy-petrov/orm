@@ -25,6 +25,8 @@ class MysqlConnectionTest extends TestCase
         $this->config = m::mock(Repository::class);
 
         $this->connection = new MysqlConnection($this->config);
+
+        parent::setUp();
     }
 
     public function test_can_resolve()

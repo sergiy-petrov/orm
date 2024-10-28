@@ -16,6 +16,8 @@ class LaravelNamingStrategyTest extends TestCase
     public function setUp(): void
     {
         $this->strategy = new LaravelNamingStrategy(new Str());
+
+        parent::setUp();
     }
 
     public function test_class_to_table_name()

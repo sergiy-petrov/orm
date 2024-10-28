@@ -25,6 +25,8 @@ class NotificationTest extends TestCase
     public function setUp(): void
     {
         $this->em = Mockery::spy(EntityManagerInterface::class);
+
+        parent::setUp();
     }
 
     public function testClassFunctions()

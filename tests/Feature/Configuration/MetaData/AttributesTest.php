@@ -17,6 +17,8 @@ class AttributesTest extends TestCase
     protected function setUp(): void
     {
         $this->meta = new Attributes();
+
+        parent::setUp();
     }
 
     public function test_can_resolve()

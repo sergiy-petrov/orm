@@ -18,6 +18,8 @@ class PrimaryReadReplicaConnectionTest extends TestCase
         if (!class_exists(PrimaryReadReplicaDoctrineWrapper::class)) {
             $this->markTestSkipped('Skipped for doctrine/dbal < 2.11');
         }
+
+        parent::setUp();
     }
 
     /**

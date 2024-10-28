@@ -39,6 +39,8 @@ class ConnectionManagerTest extends TestCase
         $this->manager = new ConnectionManager(
             $this->app
         );
+
+        parent::setUp();
     }
 
     public function test_driver_returns_the_default_driver()

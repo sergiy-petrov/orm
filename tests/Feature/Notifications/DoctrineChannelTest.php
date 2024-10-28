@@ -40,6 +40,8 @@ class DoctrineChannelTest extends TestCase
         $this->channel = new DoctrineChannel(
             $this->registry = Mockery::mock(ManagerRegistry::class)
         );
+
+        parent::setUp();
     }
 
     public function test_can_send_notification_on_default_em()

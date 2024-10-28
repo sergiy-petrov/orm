@@ -18,6 +18,8 @@ class PhpTest extends TestCase
     protected function setUp(): void
     {
         $this->meta = new Php();
+
+        parent::setUp();
     }
 
     public function test_can_resolve()

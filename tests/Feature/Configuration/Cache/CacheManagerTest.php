@@ -39,6 +39,8 @@ class CacheManagerTest extends TestCase
         $this->manager = new CacheManager(
             $this->app
         );
+
+        parent::setUp();
     }
 
     public function test_driver_returns_the_default_driver()

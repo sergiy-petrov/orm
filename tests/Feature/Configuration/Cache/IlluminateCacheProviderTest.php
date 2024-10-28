@@ -32,6 +32,8 @@ class IlluminateCacheProviderTest extends TestCase
             ->andReturn($this->repository);
 
         $this->driver = new IlluminateCacheProvider($manager);
+
+        parent::setUp();
     }
 
     public function test_driver_returns_provided_namespace(): void
