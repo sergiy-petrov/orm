@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Resolvers;
 
 use Doctrine\ORM\Mapping\EntityListenerResolver as ResolverContract;
@@ -12,15 +14,9 @@ use TypeError;
 
 class EntityListenerResolverTest extends TestCase
 {
-    /**
-     * @var m\MockInterface|Container
-     */
-    private $container;
+    private Container $container;
 
-    /**
-     * @var EntityListenerResolver
-     */
-    private $resolver;
+    private EntityListenerResolver $resolver;
 
     protected function setUp(): void
     {
@@ -37,12 +33,12 @@ class EntityListenerResolverTest extends TestCase
         parent::tearDown();
     }
 
-    public function testImplementsDoctrineInterface()
+    public function testImplementsDoctrineInterface(): void
     {
         $this->assertInstanceOf(ResolverContract::class, $this->resolver);
     }
 
-    public function testResolvesFromContainer()
+    public function testResolvesFromContainer(): void
     {
         $object = new stdClass();
         $this->container->shouldReceive('make')->with('class')->andReturn($object);
@@ -52,7 +48,7 @@ class EntityListenerResolverTest extends TestCase
         $this->assertSame($object, $resolvedObject, 'Resolver should retrieve the object from the container');
     }
 
-    public function testHoldsReferenceAfterResolve()
+    public function testHoldsReferenceAfterResolve(): void
     {
         $object        = new stdClass();
         $anotherObject = new stdClass();
@@ -65,7 +61,7 @@ class EntityListenerResolverTest extends TestCase
         $this->assertSame($object, $resolvedObjectAgain, 'Resolver should retrieve the object from its own reference');
     }
 
-    public function testClearsHeldReference()
+    public function testClearsHeldReference(): void
     {
         $object        = new stdClass();
         $anotherObject = new stdClass();
@@ -79,7 +75,7 @@ class EntityListenerResolverTest extends TestCase
         $this->assertSame($anotherObject, $resolvedObjectAgain, 'Resolver should got back to container after clear');
     }
 
-    public function testClearsAllHeldReferences()
+    public function testClearsAllHeldReferences(): void
     {
         $object           = new stdClass();
         $anotherObject    = new stdClass();
@@ -100,18 +96,18 @@ class EntityListenerResolverTest extends TestCase
         $this->assertSame($yetAnotherObject, $resolvedYetAnotherObject, 'Resolver should retrieve the object from the container');
     }
 
-    public function testAllowsDirectlyRegisteringListeners()
+    public function testAllowsDirectlyRegisteringListeners(): void
     {
         $object = new stdClass();
 
         $this->resolver->register($object);
 
-        $resolvedObject = $this->resolver->resolve(get_class($object));
+        $resolvedObject = $this->resolver->resolve($object::class);
 
-        $this->assertSame($object, $resolvedObject, "Resolver should not use container when directly registering");
+        $this->assertSame($object, $resolvedObject, 'Resolver should not use container when directly registering');
     }
 
-    public function testDoesNotAllowRegisteringNonObjects()
+    public function testDoesNotAllowRegisteringNonObjects(): void
     {
         $this->expectException(TypeError::class);
         $this->resolver->register('foo');
