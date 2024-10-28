@@ -2,6 +2,8 @@
 
 namespace LaravelDoctrineTest\ORM\Assets\Notifications;
 
-class NotificationInvalidStub extends \Illuminate\Notifications\Notification
+use Illuminate\Notifications\Notification as IlluminateNotification;
+
+class NotificationInvalidStub extends IlluminateNotification
 {
 }

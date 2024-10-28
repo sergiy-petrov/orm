@@ -23,6 +23,5 @@ class UserMock implements CanResetPassword
      */
     public function sendPasswordResetNotification($token)
     {
-        // TODO: Implement sendPasswordResetNotification() method.
     }
 }

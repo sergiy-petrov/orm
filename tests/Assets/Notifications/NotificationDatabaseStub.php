@@ -2,10 +2,13 @@
 
 namespace LaravelDoctrineTest\ORM\Assets\Notifications;
 
-class NotificationDatabaseStub extends \Illuminate\Notifications\Notification
+use Illuminate\Notifications\Notification as IlluminateNotification;
+use LaravelDoctrine\ORM\Notifications\Notification;
+
+class NotificationDatabaseStub extends IlluminateNotification
 {
     public function toDatabase()
     {
-        return (new \LaravelDoctrine\ORM\Notifications\Notification());
+        return new Notification();
     }
 }

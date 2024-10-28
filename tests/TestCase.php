@@ -12,10 +12,19 @@ class TestCase extends PHPUnitTestCase
     protected function setUp(): void
     {
         $this->application = new Application();
+
+        parent::setUp();
     }
 
     protected function tearDown(): void
     {
         unset($this->application);
+
+        parent::tearDown();
+    }
+
+    public function getApplication(): Application
+    {
+        return $this->application;
     }
 }
