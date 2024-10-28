@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Extensions;
 
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
@@ -9,22 +11,15 @@ use Doctrine\Persistence\Mapping\Driver\SymfonyFileLocator;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 
 /**
  * NOTE:  This test was degraded while refactoring for ORM 3.
  */
 class MappingDriverChainTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $driver;
+    protected XmlDriver $driver;
 
-    /**
-     * @var MappingDriverChain
-     */
-    protected $chain;
+    protected MappingDriverChain $chain;
 
     protected function setUp(): void
     {
@@ -34,12 +29,12 @@ class MappingDriverChainTest extends TestCase
         parent::setUp();
     }
 
-    public function test_get_default_driver()
+    public function testGetDefaultDriver(): void
     {
         $this->assertEquals($this->driver, $this->chain->getDefaultDriver());
     }
 
-    public function test_can_add_paths()
+    public function testCanAddPaths(): void
     {
         $this->driver = m::mock(XmlDriver::class);
         $this->chain  = new MappingDriverChain($this->driver, 'Namespace');
@@ -53,7 +48,7 @@ class MappingDriverChainTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_add_paths_to_filedriver()
+    public function testCanAddPathsToFiledriver(): void
     {
         $driver  = m::mock(XmlDriver::class);
         $locator = m::mock(DefaultFileLocator::class);
@@ -68,7 +63,7 @@ class MappingDriverChainTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_add_mappings_to_filedriver()
+    public function testCanAddMappingsToFiledriver(): void
     {
         $driver  = m::mock(XmlDriver::class);
         $locator = m::mock(DefaultFileLocator::class);
@@ -83,7 +78,7 @@ class MappingDriverChainTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_add_paths_to_simplified_filedriver()
+    public function testCanAddPathsToSimplifiedFiledriver(): void
     {
         $driver  = m::mock(SimplifiedXmlDriver::class);
         $locator = m::mock(SymfonyFileLocator::class);

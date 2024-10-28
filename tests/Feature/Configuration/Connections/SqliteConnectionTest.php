@@ -1,24 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\SqliteConnection;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 
 class SqliteConnectionTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $config;
+    protected Repository $config;
 
-    /**
-     * @var SqliteConnection
-     */
-    protected $connection;
+    protected SqliteConnection $connection;
 
     protected function setUp(): void
     {
@@ -29,7 +24,7 @@ class SqliteConnectionTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $resolved = $this->connection->resolve([
             'driver'              => 'pdo_sqlite',
@@ -51,7 +46,7 @@ class SqliteConnectionTest extends TestCase
         $this->assertCount(0, $resolved['driverOptions']);
     }
 
-    public function test_can_resolve_with_in_memory_database()
+    public function testCanResolveWithInMemoryDatabase(): void
     {
         $resolved = $this->connection->resolve([
             'driver'   => 'pdo_sqlite',
@@ -69,11 +64,9 @@ class SqliteConnectionTest extends TestCase
         $this->assertEquals(':memory', $resolved['path']);
     }
 
-    public function test_can_resolve_with_full_in__memory_database()
+    public function testCanResolveWithFullInMemoryDatabase(): void
     {
-        $resolved = $this->connection->resolve([
-            'database' => ':memory:',
-        ]);
+        $resolved = $this->connection->resolve(['database' => ':memory:']);
 
         $this->assertTrue($resolved['memory']);
         $this->assertEquals(':memory:', $resolved['path']);

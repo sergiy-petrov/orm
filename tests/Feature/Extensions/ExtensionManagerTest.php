@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Extensions;
 
 use Doctrine\Common\EventManager;
@@ -19,40 +21,19 @@ use Mockery\Mock;
 
 class ExtensionManagerTest extends TestCase
 {
-    /**
-     * @var ManagerRegistry|Mock
-     */
-    protected $registry;
+    protected ManagerRegistry|Mock $registry;
 
-    /**
-     * @var ExtensionManager
-     */
-    protected $manager;
+    protected ExtensionManager $manager;
 
-    /**
-     * @var Mock
-     */
-    protected $em;
+    protected EntityManagerInterface $em;
 
-    /**
-     * @var Mock
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * @var Mock
-     */
-    protected $evm;
+    protected EventManager $evm;
 
-    /**
-     * @var Mock
-     */
-    protected $driver;
+    protected XmlDriver $driver;
 
-    /**
-     * @var Container|Mock
-     */
-    protected $container;
+    protected Container|Mock $container;
 
     protected function setUp(): void
     {
@@ -68,26 +49,26 @@ class ExtensionManagerTest extends TestCase
         parent::setUp();
     }
 
-    public function test_register_extension()
+    public function testRegisterExtension(): void
     {
-        $extension = new ExtensionMock;
+        $extension = new ExtensionMock();
 
         $this->manager->register($extension);
 
         $this->assertContains($extension, $this->manager->getExtensions());
     }
 
-    public function test_boot_manager_with_one_manager_and_one_extension()
+    public function testBootManagerWithOneManagerAndOneExtension(): void
     {
         $this->registry->shouldReceive('getManagers')->andReturn([
-            'default' => $this->em
+            'default' => $this->em,
         ]);
 
         $this->em->shouldReceive('getEventManager')->once()->andReturn($this->evm);
         $this->em->shouldReceive('getConfiguration')->once()->andReturn($this->configuration);
 
         // Register
-        $this->container->shouldReceive('make')->with(ExtensionMock::class)->once()->andReturn(new ExtensionMock);
+        $this->container->shouldReceive('make')->with(ExtensionMock::class)->once()->andReturn(new ExtensionMock());
         $this->manager->register(ExtensionMock::class);
 
         $this->manager->boot($this->registry);
@@ -97,18 +78,18 @@ class ExtensionManagerTest extends TestCase
         $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
     }
 
-    public function test_boot_manager_with_two_managers_and_one_extension()
+    public function testBootManagerWithTwoManagersAndOneExtension(): void
     {
         $this->registry->shouldReceive('getManagers')->andReturn([
             'default' => $this->em,
-            'custom'  => $this->em
+            'custom'  => $this->em,
         ]);
 
         $this->em->shouldReceive('getEventManager')->twice()->andReturn($this->evm);
         $this->em->shouldReceive('getConfiguration')->twice()->andReturn($this->configuration);
 
         // Register
-        $this->container->shouldReceive('make')->with(ExtensionMock::class)->twice()->andReturn(new ExtensionMock);
+        $this->container->shouldReceive('make')->with(ExtensionMock::class)->twice()->andReturn(new ExtensionMock());
         $this->manager->register(ExtensionMock::class);
 
         $this->manager->boot($this->registry);
@@ -119,20 +100,20 @@ class ExtensionManagerTest extends TestCase
         $this->assertTrue((bool) $booted['custom']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
     }
 
-    public function test_boot_manager_with_one_manager_and_two_extensions()
+    public function testBootManagerWithOneManagerAndTwoExtensions(): void
     {
         $this->registry->shouldReceive('getManagers')->andReturn([
-            'default' => $this->em
+            'default' => $this->em,
         ]);
 
         $this->em->shouldReceive('getEventManager')->twice()->andReturn($this->evm);
         $this->em->shouldReceive('getConfiguration')->twice()->andReturn($this->configuration);
 
         // Register
-        $this->container->shouldReceive('make')->with(ExtensionMock::class)->once()->andReturn(new ExtensionMock);
+        $this->container->shouldReceive('make')->with(ExtensionMock::class)->once()->andReturn(new ExtensionMock());
         $this->manager->register(ExtensionMock::class);
 
-        $this->container->shouldReceive('make')->with(ExtensionMock2::class)->once()->andReturn(new ExtensionMock2);
+        $this->container->shouldReceive('make')->with(ExtensionMock2::class)->once()->andReturn(new ExtensionMock2());
         $this->manager->register(ExtensionMock2::class);
 
         $this->manager->boot($this->registry);
@@ -143,17 +124,17 @@ class ExtensionManagerTest extends TestCase
         $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock2']);
     }
 
-    public function test_extension_will_only_be_booted_once()
+    public function testExtensionWillOnlyBeBootedOnce(): void
     {
         $this->registry->shouldReceive('getManagers')->andReturn([
-            'default' => $this->em
+            'default' => $this->em,
         ]);
 
         $this->em->shouldReceive('getEventManager')->once()->andReturn($this->evm);
         $this->em->shouldReceive('getConfiguration')->once()->andReturn($this->configuration);
 
         // Register
-        $this->container->shouldReceive('make')->with(ExtensionMock::class)->times(3)->andReturn(new ExtensionMock);
+        $this->container->shouldReceive('make')->with(ExtensionMock::class)->times(3)->andReturn(new ExtensionMock());
         $this->manager->register(ExtensionMock::class);
         $this->manager->register(ExtensionMock::class);
         $this->manager->register(ExtensionMock::class);
@@ -165,10 +146,10 @@ class ExtensionManagerTest extends TestCase
         $this->assertTrue((bool) $booted['default']['LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock']);
     }
 
-    public function test_filters_get_registered_on_boot()
+    public function testFiltersGetRegisteredOnBoot(): void
     {
         $this->registry->shouldReceive('getManagers')->andReturn([
-            'default' => $this->em
+            'default' => $this->em,
         ]);
 
         $this->em->shouldReceive('getEventManager')->once()->andReturn($this->evm);
@@ -185,7 +166,7 @@ class ExtensionManagerTest extends TestCase
         $collection->shouldReceive('enable')->once()->with('filter2');
 
         // Register
-        $this->container->shouldReceive('make')->with(ExtensionWithFiltersMock::class)->once()->andReturn(new ExtensionWithFiltersMock);
+        $this->container->shouldReceive('make')->with(ExtensionWithFiltersMock::class)->once()->andReturn(new ExtensionWithFiltersMock());
         $this->manager->register(ExtensionWithFiltersMock::class);
 
         $this->manager->boot($this->registry);
@@ -205,7 +186,7 @@ class ExtensionManagerTest extends TestCase
         parent::tearDown();
     }
 
-    protected function newManager()
+    protected function newManager(): ExtensionManager
     {
         return new ExtensionManager($this->container);
     }

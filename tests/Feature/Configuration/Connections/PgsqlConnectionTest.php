@@ -1,24 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\PgsqlConnection;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 
 class PgsqlConnectionTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $config;
+    protected Repository $config;
 
-    /**
-     * @var PgsqlConnection
-     */
-    protected $connection;
+    protected PgsqlConnection $connection;
 
     protected function setUp(): void
     {
@@ -29,7 +24,7 @@ class PgsqlConnectionTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $resolved = $this->connection->resolve([
             'driver'              => 'pdo_pgsql',

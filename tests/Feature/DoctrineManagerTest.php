@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature;
 
 use Doctrine\Common\EventManager;
@@ -10,39 +12,21 @@ use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use LaravelDoctrine\ORM\BootChain;
-use LaravelDoctrine\ORM\DoctrineExtender;
 use LaravelDoctrine\ORM\DoctrineManager;
 use LaravelDoctrine\ORM\EntityManagerFactory;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
+use LaravelDoctrineTest\ORM\Assets\InvalidDoctrineExtender;
+use LaravelDoctrineTest\ORM\Assets\MyDoctrineExtender;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 
 class DoctrineManagerTest extends TestCase
 {
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var DoctrineManager
-     */
-    protected $manager;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $em;
-
-    /**
-     * @var EntityManagerFactory
-     */
-    protected $factory;
+    protected Container $container;
+    protected ManagerRegistry $registry;
+    protected DoctrineManager $manager;
+    protected EntityManagerInterface $em;
+    protected EntityManagerFactory $factory;
 
     protected function setUp(): void
     {
@@ -52,13 +36,13 @@ class DoctrineManagerTest extends TestCase
         $this->factory   = m::mock(EntityManagerFactory::class)->makePartial();
 
         $this->manager = new DoctrineManager(
-            $this->container
+            $this->container,
         );
 
         parent::setUp();
     }
 
-    public function test_can_extend_doctrine_on_existing_connection_with_callback()
+    public function testCanExtendDoctrineOnExistingConnectionWithCallback(): void
     {
         $this->registry->shouldReceive('getManager')
                        ->once()
@@ -67,14 +51,14 @@ class DoctrineManagerTest extends TestCase
 
         $this->mockEmCalls();
 
-        $this->manager->extend('default', function ($configuration, $connection, $eventManager) {
+        $this->manager->extend('default', function ($configuration, $connection, $eventManager): void {
             $this->assertExtendedCorrectly($configuration, $connection, $eventManager);
         });
 
         BootChain::boot($this->registry);
     }
 
-    public function test_can_extend_doctrine_on_existing_connection_with_class()
+    public function testCanExtendDoctrineOnExistingConnectionWithClass(): void
     {
         $this->registry->shouldReceive('getManager')
                        ->once()
@@ -84,7 +68,7 @@ class DoctrineManagerTest extends TestCase
         $this->container->shouldReceive('make')
                         ->once()
                         ->with(MyDoctrineExtender::class)
-                        ->andReturn(new MyDoctrineExtender);
+                        ->andReturn(new MyDoctrineExtender());
 
         $this->mockEmCalls();
 
@@ -93,7 +77,7 @@ class DoctrineManagerTest extends TestCase
         BootChain::boot($this->registry);
     }
 
-    public function test_cant_extend_with_a_non_existing_extender_class()
+    public function testCantExtendWithANonExistingExtenderClass(): void
     {
         $this->registry->shouldReceive('getManager')
                        ->once()
@@ -107,7 +91,7 @@ class DoctrineManagerTest extends TestCase
         BootChain::boot($this->registry);
     }
 
-    public function test_cant_extend_with_an_invalid_class()
+    public function testCantExtendWithAnInvalidClass(): void
     {
         $this->registry->shouldReceive('getManager')
                        ->once()
@@ -117,7 +101,7 @@ class DoctrineManagerTest extends TestCase
         $this->container->shouldReceive('make')
                         ->once()
                         ->with(InvalidDoctrineExtender::class)
-                        ->andReturn(new InvalidDoctrineExtender);
+                        ->andReturn(new InvalidDoctrineExtender());
 
         $this->expectException(InvalidArgumentException::class);
 
@@ -126,11 +110,11 @@ class DoctrineManagerTest extends TestCase
         BootChain::boot($this->registry);
     }
 
-    public function test_can_extend_all_connections()
+    public function testCanExtendAllConnections(): void
     {
         $this->registry->shouldReceive('getManagerNames')->once()->andReturn([
             'default',
-            'custom'
+            'custom',
         ]);
 
         $this->registry->shouldReceive('getManager')
@@ -150,14 +134,14 @@ class DoctrineManagerTest extends TestCase
         $this->em->shouldReceive('getEventManager')
                  ->twice()->andReturn(m::mock(EventManager::class));
 
-        $this->manager->extendAll(function ($configuration, $connection, $eventManager) {
+        $this->manager->extendAll(function ($configuration, $connection, $eventManager): void {
             $this->assertExtendedCorrectly($configuration, $connection, $eventManager);
         });
 
         BootChain::boot($this->registry);
     }
 
-    public function test_can_add_paths_to_default_connection()
+    public function testCanAddPathsToDefaultConnection(): void
     {
         $this->registry->shouldReceive('getManager')
                        ->once()
@@ -191,14 +175,14 @@ class DoctrineManagerTest extends TestCase
         parent::tearDown();
     }
 
-    public function assertExtendedCorrectly($configuration, $connection, $eventManager)
+    public function assertExtendedCorrectly(mixed $configuration, mixed $connection, mixed $eventManager): void
     {
         $this->assertInstanceOf(Configuration::class, $configuration);
         $this->assertInstanceOf(Connection::class, $connection);
         $this->assertInstanceOf(EventManager::class, $eventManager);
     }
 
-    protected function mockEmCalls()
+    protected function mockEmCalls(): void
     {
         $this->em->shouldReceive('getConfiguration')
                  ->once()->andReturn(m::mock(Configuration::class));
@@ -207,21 +191,4 @@ class DoctrineManagerTest extends TestCase
         $this->em->shouldReceive('getEventManager')
                  ->once()->andReturn(m::mock(EventManager::class));
     }
-}
-
-class MyDoctrineExtender implements DoctrineExtender
-{
-    /**
-     * @param Configuration $configuration
-     * @param Connection    $connection
-     * @param EventManager  $eventManager
-     */
-    public function extend(Configuration $configuration, Connection $connection, EventManager $eventManager): void
-    {
-        (new DoctrineManagerTest)->assertExtendedCorrectly($configuration, $connection, $eventManager);
-    }
-}
-
-class InvalidDoctrineExtender
-{
 }

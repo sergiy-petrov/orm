@@ -1,26 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Serializers;
 
 use LaravelDoctrine\ORM\Serializers\JsonSerializer;
 use LaravelDoctrineTest\ORM\Assets\Serializers\JsonableEntity;
 use LaravelDoctrineTest\ORM\TestCase;
 
+use const JSON_NUMERIC_CHECK;
+
 class JsonSerializerTest extends TestCase
 {
-    /**
-     * @var JsonSerializer
-     */
-    protected $serializer;
+    protected JsonSerializer $serializer;
 
     protected function setUp(): void
     {
-        $this->serializer = new JsonSerializer;
+        $this->serializer = new JsonSerializer();
 
         parent::setUp();
     }
 
-    public function test_can_serialize_to_json()
+    public function testCanSerializeToJson(): void
     {
         $jsonableEntity = new JsonableEntity();
 
@@ -33,7 +34,7 @@ class JsonSerializerTest extends TestCase
         $this->assertEquals('{"id":"IDVALUE","name":"NAMEVALUE","numeric":"1"}', $json);
     }
 
-    public function test_can_serialize_to_json_with_numeric_check()
+    public function testCanSerializeToJsonWithNumericCheck(): void
     {
         $json = $this->serializer->serialize(new JsonableEntity(), JSON_NUMERIC_CHECK);
 

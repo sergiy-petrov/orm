@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
@@ -10,10 +12,7 @@ use Mockery as m;
 
 class SimplifiedXmlTest extends TestCase
 {
-    /**
-     * @var SimplifiedXml
-     */
-    protected $meta;
+    protected SimplifiedXml $meta;
 
     protected function setUp(): void
     {
@@ -22,13 +21,13 @@ class SimplifiedXmlTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $resolved = $this->meta->resolve([
             'paths'     => ['entities' => 'App\Entities'],
             'dev'       => true,
             'extension' => '.xml',
-            'proxies'   => ['path' => 'path']
+            'proxies'   => ['path' => 'path'],
         ]);
 
         $this->assertInstanceOf(MappingDriver::class, $resolved);

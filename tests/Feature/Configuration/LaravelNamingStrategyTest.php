@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration;
 
 use Illuminate\Support\Str;
@@ -8,10 +10,7 @@ use LaravelDoctrineTest\ORM\TestCase;
 
 class LaravelNamingStrategyTest extends TestCase
 {
-    /**
-     * @type LaravelNamingStrategy
-     */
-    protected $strategy;
+    protected LaravelNamingStrategy $strategy;
 
     public function setUp(): void
     {
@@ -20,7 +19,7 @@ class LaravelNamingStrategyTest extends TestCase
         parent::setUp();
     }
 
-    public function test_class_to_table_name()
+    public function testClassToTableName(): void
     {
         $className = 'Acme\\ClassName';
 
@@ -30,7 +29,7 @@ class LaravelNamingStrategyTest extends TestCase
         $this->assertEquals('class_names', $tableName);
     }
 
-    public function test_property_to_column_name()
+    public function testPropertyToColumnName(): void
     {
         // Columns derive from snakeCased fields
         $field = 'createdAt';
@@ -41,7 +40,7 @@ class LaravelNamingStrategyTest extends TestCase
         $this->assertEquals('created_at', $columnName);
     }
 
-    public function test_property_to_column_name_with_class_name()
+    public function testPropertyToColumnNameWithClassName(): void
     {
         // Columns derive from snakeCased fields
         $field = 'createdAt';
@@ -55,7 +54,7 @@ class LaravelNamingStrategyTest extends TestCase
         $this->assertEquals('created_at', $columnName);
     }
 
-    public function test_embedded_field_to_column_name()
+    public function testEmbeddedFieldToColumnName(): void
     {
         // Laravel doesn't have embeddeds
         $embeddedField = 'address';
@@ -67,7 +66,7 @@ class LaravelNamingStrategyTest extends TestCase
         $this->assertEquals('address_street1', $columnName);
     }
 
-    public function test_reference_column_name()
+    public function testReferenceColumnName(): void
     {
         // Laravel's convention is just 'id', like the default Doctrine
         $columnName = $this->strategy->referenceColumnName();
@@ -75,7 +74,7 @@ class LaravelNamingStrategyTest extends TestCase
         $this->assertEquals('id', $columnName);
     }
 
-    public function test_join_column_name()
+    public function testJoinColumnName(): void
     {
         // Given a User -> belongsTo -> Group
         $field = 'group';
@@ -86,7 +85,7 @@ class LaravelNamingStrategyTest extends TestCase
         $this->assertEquals('group_id', $columnName);
     }
 
-    public function test_belongs_to_many_join_table()
+    public function testBelongsToManyJoinTable(): void
     {
         // Laravel doesn't do as Doctrine's default here
         $sourceModel = 'Acme\\ClassName';
@@ -103,7 +102,7 @@ class LaravelNamingStrategyTest extends TestCase
         $this->assertEquals('another_class_class_name', $tableName);
     }
 
-    public function test_join_column_names()
+    public function testJoinColumnNames(): void
     {
         // This case is similar to Doctrine's default as well
         $className = 'Acme\\Foo';

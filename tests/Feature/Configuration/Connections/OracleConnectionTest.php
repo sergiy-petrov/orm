@@ -1,24 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\OracleConnection;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 
 class OracleConnectionTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $config;
+    protected Repository $config;
 
-    /**
-     * @var OracleConnection
-     */
-    protected $connection;
+    protected OracleConnection $connection;
 
     protected function setUp(): void
     {
@@ -29,7 +24,7 @@ class OracleConnectionTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $resolved = $this->connection->resolve([
             'driver'              => 'oci8',

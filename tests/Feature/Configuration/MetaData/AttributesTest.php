@@ -1,18 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 
-use LaravelDoctrine\ORM\Configuration\MetaData\Attributes;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use LaravelDoctrine\ORM\Configuration\MetaData\Attributes;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 
 class AttributesTest extends TestCase
 {
-    /**
-     * @var Attributes
-     */
-    protected $meta;
+    protected Attributes $meta;
 
     protected function setUp(): void
     {
@@ -21,7 +21,7 @@ class AttributesTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $resolved = $this->meta->resolve([
             'paths'   => ['entities'],
@@ -30,7 +30,7 @@ class AttributesTest extends TestCase
         ]);
 
         $this->assertInstanceOf(MappingDriver::class, $resolved);
-        $this->assertInstanceOf(\Doctrine\ORM\Mapping\Driver\AttributeDriver::class, $resolved);
+        $this->assertInstanceOf(AttributeDriver::class, $resolved);
     }
 
     protected function tearDown(): void

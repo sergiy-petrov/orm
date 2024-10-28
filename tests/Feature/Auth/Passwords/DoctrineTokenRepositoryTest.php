@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Auth\Passwords;
 
 use Carbon\Carbon;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Auth\Passwords\DoctrineTokenRepository;
@@ -15,35 +18,17 @@ use Mockery\Mock;
 
 class DoctrineTokenRepositoryTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $schema;
+    protected AbstractSchemaManager $schema;
 
-    /**
-     * @var DoctrineTokenRepository
-     */
-    protected $repository;
+    protected DoctrineTokenRepository $repository;
 
-    /**
-     * @var Mock
-     */
-    protected $registry;
+    protected Mock $registry;
 
-    /**
-     * @var Mock
-     */
-    protected $connection;
+    protected Connection $connection;
 
-    /**
-     * @var Mock
-     */
-    protected $hasher;
+    protected Hasher $hasher;
 
-    /**
-     * @var Mock
-     */
-    protected $builder;
+    protected QueryBuilder $builder;
 
     protected function setUp(): void
     {
@@ -64,13 +49,13 @@ class DoctrineTokenRepositoryTest extends TestCase
             $this->hasher,
             'password_resets',
             'hashkey',
-            60
+            60,
         );
 
         parent::setUp();
     }
 
-    public function test_can_create_a_token()
+    public function testCanCreateAToken(): void
     {
         $this->connection->shouldReceive('createQueryBuilder')
                          ->twice()
@@ -108,17 +93,17 @@ class DoctrineTokenRepositoryTest extends TestCase
                       ->with([
                           'email'      => ':email',
                           'token'      => ':token',
-                          'created_at' => ':date'
+                          'created_at' => ':date',
                       ])
                       ->once()->andReturnSelf();
 
         $this->builder->shouldReceive('setParameters')
                       ->once()->andReturnSelf();
 
-        $this->assertNotNull($this->repository->create(new UserMock));
+        $this->assertNotNull($this->repository->create(new UserMock()));
     }
 
-    public function test_can_check_if_exists()
+    public function testCanCheckIfExists(): void
     {
         $this->connection->shouldReceive('createQueryBuilder')
                          ->once()
@@ -154,7 +139,7 @@ class DoctrineTokenRepositoryTest extends TestCase
                       ->with('email', 'user@mockery.mock')
                       ->andReturnSelf();
 
-        $result = m::mock(\Doctrine\DBAL\Result::class);
+        $result = m::mock(Result::class);
 
         $this->builder->shouldReceive('executeQuery')
                       ->once()
@@ -165,13 +150,13 @@ class DoctrineTokenRepositoryTest extends TestCase
                       ->andReturn([
                           'email'      => 'user@mockery.mock',
                           'token'      => 'token',
-                          'created_at' => Carbon::now()
+                          'created_at' => Carbon::now(),
                       ]);
 
-        $this->assertTrue($this->repository->exists(new UserMock, 'token'));
+        $this->assertTrue($this->repository->exists(new UserMock(), 'token'));
     }
 
-    public function test_can_check_if_recently_created_token()
+    public function testCanCheckIfRecentlyCreatedToken(): void
     {
         $this->connection->shouldReceive('createQueryBuilder')
                          ->once()
@@ -197,7 +182,7 @@ class DoctrineTokenRepositoryTest extends TestCase
                       ->with('email', 'user@mockery.mock')
                       ->andReturnSelf();
 
-        $result = m::mock(\Doctrine\DBAL\Result::class);
+        $result = m::mock(Result::class);
 
         $this->builder->shouldReceive('executeQuery')
             ->once()
@@ -208,13 +193,13 @@ class DoctrineTokenRepositoryTest extends TestCase
               ->andReturn([
                   'email'      => 'user@mockery.mock',
                   'token'      => 'token',
-                  'created_at' => Carbon::now()
+                  'created_at' => Carbon::now(),
               ]);
 
-        $this->assertTrue($this->repository->recentlyCreatedToken(new UserMock));
+        $this->assertTrue($this->repository->recentlyCreatedToken(new UserMock()));
     }
 
-    public function test_can_delete()
+    public function testCanDelete(): void
     {
         $this->connection->shouldReceive('createQueryBuilder')
                          ->once()
@@ -235,7 +220,6 @@ class DoctrineTokenRepositoryTest extends TestCase
                       ->with('email', 'user@mockery.mock')
                       ->andReturnSelf();
 
-
         $this->builder->shouldReceive('executeStatement')
                       ->once()
                       ->andReturn(true);
@@ -245,7 +229,7 @@ class DoctrineTokenRepositoryTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_delete_expired()
+    public function testCanDeleteExpired(): void
     {
         $this->connection->shouldReceive('createQueryBuilder')
                          ->once()

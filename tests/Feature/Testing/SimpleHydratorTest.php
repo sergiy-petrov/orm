@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Testing;
 
 use LaravelDoctrine\ORM\Testing\SimpleHydrator;
@@ -9,17 +11,15 @@ use LaravelDoctrineTest\ORM\TestCase;
 
 class SimpleHydratorTest extends TestCase
 {
-    public function test_can_hydrate_class()
+    public function testCanHydrateClass(): void
     {
-        $entity = SimpleHydrator::hydrate(AncestorHydrateableClass::class, [
-            'name' => 'Patrick',
-        ]);
+        $entity = SimpleHydrator::hydrate(AncestorHydrateableClass::class, ['name' => 'Patrick']);
 
         $this->assertInstanceOf(AncestorHydrateableClass::class, $entity);
         $this->assertEquals('Patrick', $entity->getName());
     }
 
-    public function test_can_hydrate_with_extension_of_private_properties()
+    public function testCanHydrateWithExtensionOfPrivateProperties(): void
     {
         $entity = SimpleHydrator::hydrate(ChildHydrateableClass::class, [
             'name'        => 'Patrick',

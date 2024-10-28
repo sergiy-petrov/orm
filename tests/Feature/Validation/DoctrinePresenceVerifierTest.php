@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Validation;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,52 +14,30 @@ use LaravelDoctrine\ORM\Validation\DoctrinePresenceVerifier;
 use LaravelDoctrineTest\ORM\Assets\Mock\CountableEntityMock;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 
 class DoctrinePresenceVerifierTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $registry;
-
-    /**
-     * @var DoctrinePresenceVerifier
-     */
-    protected $verifier;
-
-    /**
-     * @var Mock
-     */
-    protected $em;
-
-    /**
-     * @var Mock
-     */
-    protected $builder;
-
-    /**
-     * @var Mock
-     */
-    protected $query;
+    protected ManagerRegistry $registry;
+    protected DoctrinePresenceVerifier $verifier;
+    protected EntityManagerInterface $em;
+    protected QueryBuilder $builder;
+    protected Query $query;
 
     protected function setUp(): void
     {
-        // $this->markTestSkipped('Revisit these tests');
-
         $this->em       = m::mock(EntityManagerInterface::class);
         $this->registry = m::mock(ManagerRegistry::class);
         $this->builder  = m::mock(QueryBuilder::class);
         $this->query    = m::mock(Query::class);
 
         $this->verifier = new DoctrinePresenceVerifier(
-            $this->registry
+            $this->registry,
         );
 
         parent::setUp();
     }
 
-    public function test_can_get_count()
+    public function testCanGetCount(): void
     {
         $this->defaultGetCountMocks();
 
@@ -66,7 +46,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_get_count_with_excluded_ids()
+    public function testCanGetCountWithExcludedIds(): void
     {
         $this->defaultGetCountMocks();
 
@@ -80,7 +60,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_get_count_with_excluded_ids_with_custom_id_column()
+    public function testCanGetCountWithExclucdedIdsWithCustomIdColumn(): void
     {
         $this->defaultGetCountMocks();
 
@@ -94,7 +74,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_get_count_with_extra_conditions()
+    public function testCanGetCountWithExtraConditions(): void
     {
         $this->defaultGetCountMocks();
 
@@ -114,13 +94,13 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->verifier->getCount(CountableEntityMock::class, 'email', 'test@email.com', null, null, [
             'condition1' => 'value1',
             'condition2' => 'value2',
-            'condition3' => '!value3'
+            'condition3' => '!value3',
         ]);
 
         $this->assertTrue(true);
     }
 
-    public function test_can_get_count_with_extra_conditions_with_null()
+    public function testCanGetCountWithExtraConditionsWithNull(): void
     {
         $this->defaultGetCountMocks();
 
@@ -139,13 +119,13 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->verifier->getCount(CountableEntityMock::class, 'email', 'test@email.com', null, null, [
             'condition1' => 'value1',
             'condition2' => 'value2',
-            'condition3' => 'NULL'
+            'condition3' => 'NULL',
         ]);
 
         $this->assertTrue(true);
     }
 
-    public function test_can_get_count_with_extra_conditions_with_not_null()
+    public function testCanGetCountWithExtraConditionsWithNotNull(): void
     {
         $this->defaultGetCountMocks();
 
@@ -164,13 +144,13 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->verifier->getCount(CountableEntityMock::class, 'email', 'test@email.com', null, null, [
             'condition1' => 'value1',
             'condition2' => 'value2',
-            'condition3' => 'NOT_NULL'
+            'condition3' => 'NOT_NULL',
         ]);
 
         $this->assertTrue(true);
     }
 
-    public function test_can_get_multi_count()
+    public function testCanGetMultiCount(): void
     {
         $this->defaultGetMultiCountMocks();
 
@@ -179,7 +159,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_get_multi_count_with_extra_conditions()
+    public function testCanGetMultiCountWithExtraConditions(): void
     {
         $this->defaultGetMultiCountMocks();
 
@@ -194,13 +174,13 @@ class DoctrinePresenceVerifierTest extends TestCase
 
         $this->verifier->getMultiCount(CountableEntityMock::class, 'email', ['test@email.com'], [
             'condition1' => 'value1',
-            'condition2' => 'value2'
+            'condition2' => 'value2',
         ]);
 
         $this->assertTrue(true);
     }
 
-    public function test_counting_invalid_entity_throws_exception()
+    public function testCountingInvalidEntityThrowsException(): void
     {
         $this->registry->shouldReceive('getManagerForClass')
             ->with(CountableEntityMock::class)
@@ -212,7 +192,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->verifier->getCount(CountableEntityMock::class, 'email', 'test@email.com');
     }
 
-    protected function defaultGetCountMocks()
+    protected function defaultGetCountMocks(): void
     {
         $this->registry->shouldReceive('getManagerForClass')
                        ->with(CountableEntityMock::class)
@@ -241,7 +221,7 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->query->shouldReceive('getSingleScalarResult');
     }
 
-    protected function defaultGetMultiCountMocks()
+    protected function defaultGetMultiCountMocks(): void
     {
         $this->registry->shouldReceive('getManagerForClass')
                        ->with(CountableEntityMock::class)
@@ -262,7 +242,7 @@ class DoctrinePresenceVerifierTest extends TestCase
                       ->once();
 
         $this->builder->shouldReceive('expr')->andReturn(new Expr());
-        $this->builder->shouldReceive('in')->with("e.email", ['test@email.com']);
+        $this->builder->shouldReceive('in')->with('e.email', ['test@email.com']);
 
         $this->builder->shouldReceive('getQuery')
                       ->once()->andReturn($this->query);

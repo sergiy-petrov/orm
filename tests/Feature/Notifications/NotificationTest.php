@@ -1,26 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Notifications;
 
 use Doctrine\ORM\EntityManagerInterface;
 use LaravelDoctrine\ORM\Notifications\Notification;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery;
-use Mockery\Mock;
 use ReflectionClass;
 use stdClass;
 
 class NotificationTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    private $registry;
-
-    /**
-     * @var Mock
-     */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function setUp(): void
     {
@@ -29,7 +22,7 @@ class NotificationTest extends TestCase
         parent::setUp();
     }
 
-    public function testClassFunctions()
+    public function testClassFunctions(): void
     {
         $entity = new Notification();
 
@@ -54,7 +47,7 @@ class NotificationTest extends TestCase
         $this->assertSame($user, $entity->getUser());
 
         $reflection = new ReflectionClass($entity);
-        $property = $reflection->getProperty('id');
+        $property   = $reflection->getProperty('id');
         $property->setAccessible(true);
         $property->setValue($entity, 1);
 

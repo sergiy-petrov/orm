@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 
 use Illuminate\Contracts\Cache\Factory;
@@ -8,9 +10,9 @@ use LaravelDoctrine\ORM\Configuration\Cache\RedisCacheProvider;
 use Mockery as m;
 use Psr\Cache\CacheItemPoolInterface;
 
-class RedisCacheProviderTest extends AbstractCacheProviderTest
+class RedisCacheProviderTest extends CacheProviderTest
 {
-    public function getProvider()
+    public function getProvider(): mixed
     {
         $repo    = m::mock(Repository::class);
         $manager = m::mock(Factory::class);
@@ -19,11 +21,11 @@ class RedisCacheProviderTest extends AbstractCacheProviderTest
                 ->once()->andReturn($repo);
 
         return new RedisCacheProvider(
-            $manager
+            $manager,
         );
     }
 
-    public function getExpectedInstance()
+    public function getExpectedInstance(): mixed
     {
         return CacheItemPoolInterface::class;
     }

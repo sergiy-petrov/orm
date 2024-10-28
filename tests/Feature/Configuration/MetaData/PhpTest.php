@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
@@ -10,10 +12,7 @@ use Mockery as m;
 
 class PhpTest extends TestCase
 {
-    /**
-     * @var Php
-     */
-    protected $meta;
+    protected Php $meta;
 
     protected function setUp(): void
     {
@@ -22,12 +21,12 @@ class PhpTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $resolved = $this->meta->resolve([
             'paths'   => ['entities'],
             'dev'     => true,
-            'proxies' => ['path' => 'path']
+            'proxies' => ['path' => 'path'],
         ]);
 
         $this->assertInstanceOf(MappingDriver::class, $resolved);

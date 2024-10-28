@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Illuminate\Contracts\Config\Repository;
@@ -11,22 +13,15 @@ use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 
+use function is_array;
+
 class ConnectionManagerTest extends TestCase
 {
-    /**
-     * @var ConnectionManager
-     */
-    protected $manager;
+    protected ConnectionManager $manager;
 
-    /**
-     * @var Container
-     */
-    protected $app;
+    protected Container $app;
 
-    /**
-     * @var Repository
-     */
-    protected $config;
+    protected Repository $config;
 
     protected function setUp(): void
     {
@@ -37,41 +32,41 @@ class ConnectionManagerTest extends TestCase
         $this->config->shouldReceive('get');
 
         $this->manager = new ConnectionManager(
-            $this->app
+            $this->app,
         );
 
         parent::setUp();
     }
 
-    public function test_driver_returns_the_default_driver()
+    public function testDriverReturnsTheDefaultDriver(): void
     {
         $this->app->shouldReceive('resolve')->andReturn(
-            (new MysqlConnection($this->config))->resolve()
+            (new MysqlConnection($this->config))->resolve(),
         );
 
         $this->assertTrue(is_array($this->manager->driver()));
         $this->assertContains('pdo_mysql', $this->manager->driver());
     }
 
-    public function test_driver_can_return_a_given_driver()
+    public function testDriverCanReturnAGivenDriver(): void
     {
         $this->app->shouldReceive('resolve')->andReturn(
-            (new SqliteConnection($this->config))->resolve()
+            (new SqliteConnection($this->config))->resolve(),
         );
 
         $this->assertTrue(is_array($this->manager->driver('sqlite')));
         $this->assertContains('pdo_sqlite', $this->manager->driver());
     }
 
-    public function test_cant_resolve_unsupported_drivers()
+    public function testCantResolveUnsupportedDrivers(): void
     {
         $this->expectException(DriverNotFound::class);
         $this->manager->driver('non-existing');
     }
 
-    public function test_can_create_custom_drivers()
+    public function testCanCreateCustomDriver(): void
     {
-        $this->manager->extend('new', function () {
+        $this->manager->extend('new', static function () {
             return 'connection';
         });
 
@@ -80,18 +75,18 @@ class ConnectionManagerTest extends TestCase
         $this->assertEquals('connection', $this->manager->driver('new'));
     }
 
-    public function test_can_use_application_when_extending()
+    public function testCanUseApplicationWhenExtending(): void
     {
-        $this->manager->extend('new', function ($app) {
+        $this->manager->extend('new', function ($app): void {
             $this->assertInstanceOf(Container::class, $app);
         });
 
         $this->assertTrue(true);
     }
 
-    public function test_can_replace_an_existing_driver()
+    public function testCanReplaceAnExistingDriver(): void
     {
-        $this->manager->extend('oci8', function () {
+        $this->manager->extend('oci8', static function () {
             return 'connection';
         });
 

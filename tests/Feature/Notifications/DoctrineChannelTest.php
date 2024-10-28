@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Notifications;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,33 +20,26 @@ use RuntimeException;
 
 class DoctrineChannelTest extends TestCase
 {
-    /**
-     * @var DoctrineChannel
-     */
-    private $channel;
+    private DoctrineChannel $channel;
 
-    /**
-     * @var Mock
-     */
-    private $registry;
+    /** @var Mock */
+    private ManagerRegistry $registry;
 
-    /**
-     * @var Mock
-     */
-    private $em;
+    /** @var Mock */
+    private EntityManagerInterface $em;
 
     public function setUp(): void
     {
         $this->em = Mockery::spy(EntityManagerInterface::class);
 
-        $this->channel = new DoctrineChannel(
-            $this->registry = Mockery::mock(ManagerRegistry::class)
+        $this->channel      = new DoctrineChannel(
+            $this->registry = Mockery::mock(ManagerRegistry::class),
         );
 
         parent::setUp();
     }
 
-    public function test_can_send_notification_on_default_em()
+    public function testCanSendNotificationOnDefaultEm(): void
     {
         $this->registry->shouldReceive('getManagerForClass')
                        ->with('LaravelDoctrine\ORM\Notifications\Notification')
@@ -59,7 +54,7 @@ class DoctrineChannelTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testTriggerExceptionOnInvalidNotification()
+    public function testTriggerExceptionOnInvalidNotification(): void
     {
         $this->registry->shouldReceive('getManagerForClass')
             ->with('LaravelDoctrine\ORM\Notifications\Notification')
@@ -75,7 +70,7 @@ class DoctrineChannelTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_can_send_notification_on_custom_em()
+    public function testCanSendNotificationOnCustomEm(): void
     {
         $this->registry->shouldReceive('getManager')
                        ->with('custom')
@@ -89,7 +84,7 @@ class DoctrineChannelTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_it_should_throw_exception_when_it_does_not_find_an_em()
+    public function testItShouldThrowExceptionWhenItDoesNotFindAnEm(): void
     {
         $this->expectException(NoEntityManagerFound::class);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection as PrimaryReadReplicaDoctrineWrapper;
@@ -8,6 +10,8 @@ use LaravelDoctrine\ORM\Configuration\Connections\PrimaryReadReplicaConnection;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 
+use function class_exists;
+
 /**
  * Basic unit tests for primary read-replica connection
  */
@@ -15,7 +19,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
 {
     protected function setUp(): void
     {
-        if (!class_exists(PrimaryReadReplicaDoctrineWrapper::class)) {
+        if (! class_exists(PrimaryReadReplicaDoctrineWrapper::class)) {
             $this->markTestSkipped('Skipped for doctrine/dbal < 2.11');
         }
 
@@ -25,9 +29,9 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Data provider for testPrimaryReplicaConnection.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function getPrimaryReplicaConnectionData()
+    public function getPrimaryReplicaConnectionData(): array
     {
         $out = [];
 
@@ -35,49 +39,49 @@ class PrimaryReadReplicaConnectionTest extends TestCase
         $out[] = [
             $this->getResolvedMysqlConfig(),
             $this->getInputConfigwithArrayOfReplicasInReadKey(),
-            $this->getExpectedConfig()
+            $this->getExpectedConfig(),
         ];
 
         // Case #1. Configuration is only set in the read/write nodes.
         $out[] = [
             ['driver' => 'pdo_mysql'],
             $this->getNodesInputConfig(),
-            $this->getNodesExpectedConfig()
+            $this->getNodesExpectedConfig(),
         ];
 
         // Case #2. Simple valid configuration with oracle base settings.
         $out[] = [
             $this->getResolvedOracleConfig(),
             $this->getInputConfigwithArrayOfReplicasInReadKey(),
-            $this->getOracleExpectedConfig()
+            $this->getOracleExpectedConfig(),
         ];
 
         // Case #3. Simple valid configuration with pgqsql base settings.
         $out[] = [
             $this->getResolvedPgqsqlConfig(),
             $this->getInputConfigwithArrayOfReplicasInReadKey(),
-            $this->getPgsqlExpectedConfig()
+            $this->getPgsqlExpectedConfig(),
         ];
 
         // Case #4. Simple valid configuration with sqlite base settings.
         $out[] = [
             $this->getResolvedSqliteConfig(),
             $this->getSqliteInputConfig(),
-            $this->getSqliteExpectedConfig()
+            $this->getSqliteExpectedConfig(),
         ];
 
         // Case #5. Valid configuration as with 1 replica 'read' entry and plain-text host
         $out[] = [
             $this->getResolvedMysqlConfig(),
             $this->getInputConfigWithPlainTextHostValue(),
-            $this->getExpectedConfigForCase5()
+            $this->getExpectedConfigForCase5(),
         ];
 
         // Case #6. Valid configuration as with 1 replica config 'read' entry and array of hosts in 'host' key
         $out[] = [
             $this->getResolvedMysqlConfig(),
             $this->getInputConfigWithArrayAsHostValue(),
-            $this->getExpectedConfigForCase6()
+            $this->getExpectedConfigForCase6(),
         ];
 
         return $out;
@@ -86,22 +90,24 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Check if primary replica connection manages configuration well.
      *
-     * @param array $resolvedBaseSettings
-     * @param array $settings
-     * @param $expectedOutput
+     * @param mixed[] $resolvedBaseSettings
+     * @param mixed[] $settings
+     * @param mixed[] $expectedOutput
      *
      * @dataProvider getPrimaryReplicaConnectionData
      */
-    public function testPrimaryReplicaConnection(array $resolvedBaseSettings, array $settings, array $expectedOutput)
+    public function testPrimaryReplicaConnection(array $resolvedBaseSettings, array $settings, array $expectedOutput): void
     {
         $this->assertEquals(
             $expectedOutput,
-            (new PrimaryReadReplicaConnection(m::mock(Repository::class), $resolvedBaseSettings))->resolve($settings)
+            (new PrimaryReadReplicaConnection(m::mock(Repository::class), $resolvedBaseSettings))->resolve($settings),
         );
     }
 
     /**
      * Returns dummy input configuration for testing.
+     *
+     * @return mixed[]
      */
     private function getInputConfigwithArrayOfReplicasInReadKey(): array
     {
@@ -129,18 +135,19 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                 ],
                 [
                     'host' => 'localhost2',
-                    'port' => 3309
+                    'port' => 3309,
                 ],
             ],
             'serverVersion'       => '5.8',
             'defaultTableOptions' => [
                 'charset' => 'utf8mb4',
                 'collate' => 'utf8mb4_unicode_ci',
-            ]
+            ],
         ];
     }
 
-    private function getInputConfigWithPlainTextHostValue()
+    /** @return mixed[] */
+    private function getInputConfigWithPlainTextHostValue(): array
     {
         return [
             'driver'    => 'mysql',
@@ -168,11 +175,12 @@ class PrimaryReadReplicaConnectionTest extends TestCase
             'defaultTableOptions' => [
                 'charset' => 'utf8mb4',
                 'collate' => 'utf8mb4_unicode_ci',
-            ]
+            ],
         ];
     }
 
-    private function getInputConfigWithArrayAsHostValue()
+    /** @return mixed[] */
+    private function getInputConfigWithArrayAsHostValue(): array
     {
         return [
             'driver'    => 'mysql',
@@ -200,16 +208,16 @@ class PrimaryReadReplicaConnectionTest extends TestCase
             'defaultTableOptions' => [
                 'charset' => 'utf8mb4',
                 'collate' => 'utf8mb4_unicode_ci',
-            ]
+            ],
         ];
     }
 
     /**
      * Returns dummy expected result configuration for testing.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getExpectedConfig()
+    private function getExpectedConfig(): array
     {
         return [
             'wrapperClass'   => PrimaryReadReplicaDoctrineWrapper::class,
@@ -224,7 +232,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'port'        => '3308',
                     'charset'     => 'charset',
                     'unix_socket' => 'unix_socket',
-                    'prefix'      => 'prefix'
+                    'prefix'      => 'prefix',
                 ],
                 [
                     'host'        => 'localhost2',
@@ -234,8 +242,8 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'port'        => '3309',
                     'charset'     => 'charset',
                     'unix_socket' => 'unix_socket',
-                    'prefix'      => 'prefix'
-                ]
+                    'prefix'      => 'prefix',
+                ],
             ],
             'primary' => [
                 'host'        => 'localhost',
@@ -245,7 +253,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                 'port'        => '3307',
                 'charset'     => 'charset',
                 'unix_socket' => 'unix_socket',
-                'prefix'      => 'prefix'
+                'prefix'      => 'prefix',
             ],
             'defaultTableOptions' => [
                 'charset' => 'utf8mb4',
@@ -256,6 +264,8 @@ class PrimaryReadReplicaConnectionTest extends TestCase
 
     /**
      * Returns dummy expected result configuration for testing.
+     *
+     * @return mixed[]
      */
     private function getExpectedConfigForCase5(): array
     {
@@ -272,7 +282,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'port'        => '3308',
                     'charset'     => 'charset',
                     'unix_socket' => 'unix_socket',
-                    'prefix'      => 'prefix'
+                    'prefix'      => 'prefix',
                 ],
             ],
             'primary' => [
@@ -283,7 +293,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                 'port'        => '3307',
                 'charset'     => 'charset',
                 'unix_socket' => 'unix_socket',
-                'prefix'      => 'prefix'
+                'prefix'      => 'prefix',
             ],
             'defaultTableOptions' => [
                 'charset' => 'utf8mb4',
@@ -294,6 +304,8 @@ class PrimaryReadReplicaConnectionTest extends TestCase
 
     /**
      * Returns dummy expected result configuration for testing.
+     *
+     * @return mixed[]
      */
     private function getExpectedConfigForCase6(): array
     {
@@ -310,7 +322,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'port'        => '3308',
                     'charset'     => 'charset',
                     'unix_socket' => 'unix_socket',
-                    'prefix'      => 'prefix'
+                    'prefix'      => 'prefix',
                 ],
                 [
                     'host'        => 'newhost2',
@@ -320,7 +332,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'port'        => '3308',
                     'charset'     => 'charset',
                     'unix_socket' => 'unix_socket',
-                    'prefix'      => 'prefix'
+                    'prefix'      => 'prefix',
                 ],
             ],
             'primary' => [
@@ -331,7 +343,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                 'port'        => '3307',
                 'charset'     => 'charset',
                 'unix_socket' => 'unix_socket',
-                'prefix'      => 'prefix'
+                'prefix'      => 'prefix',
             ],
             'defaultTableOptions' => [
                 'charset' => 'utf8mb4',
@@ -343,9 +355,9 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Returns dummy input configuration where configuration is only set in read and write nodes.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getNodesInputConfig()
+    private function getNodesInputConfig(): array
     {
         return [
             'write' => [
@@ -353,7 +365,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                 'password' => 'secret1',
                 'host'     => 'localhost',
                 'database' => 'test',
-                'username' => 'homestead'
+                'username' => 'homestead',
             ],
             'read' => [
                 [
@@ -361,14 +373,14 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'database' => 'test2',
                     'host'     => 'localhost',
                     'username' => 'homestead',
-                    'password' => 'secret'
+                    'password' => 'secret',
                 ],
                 [
                     'host'     => 'localhost2',
                     'port'     => 3309,
                     'database' => 'test',
                     'username' => 'homestead',
-                    'password' => 'secret'
+                    'password' => 'secret',
                 ],
             ],
         ];
@@ -377,9 +389,9 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Returns dummy expected output configuration where configuration is only set in read and write nodes.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getNodesExpectedConfig()
+    private function getNodesExpectedConfig(): array
     {
         return [
             'wrapperClass'  => PrimaryReadReplicaDoctrineWrapper::class,
@@ -398,7 +410,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'password' => 'secret',
                     'dbname'   => 'test',
                     'port'     => '3309',
-                ]
+                ],
             ],
             'primary' => [
                 'host'     => 'localhost',
@@ -413,9 +425,9 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Returns dummy expected result configuration for testing oracle connections.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getOracleExpectedConfig()
+    private function getOracleExpectedConfig(): array
     {
         $expectedConfigOracle                    = $this->getNodesExpectedConfig();
         $expectedConfigOracle['driver']          = 'oci8';
@@ -433,9 +445,9 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Returns dummy expected result configuration for testing pgsql connections.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getPgsqlExpectedConfig()
+    private function getPgsqlExpectedConfig(): array
     {
         $expectedConfigPgsql                          = $this->getNodesExpectedConfig();
         $expectedConfigPgsql['driver']                = 'pgsql';
@@ -456,9 +468,9 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Returns dummy expected result configuration for testing Sqlite connections.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getSqliteExpectedConfig()
+    private function getSqliteExpectedConfig(): array
     {
         return [
             'wrapperClass'  => PrimaryReadReplicaDoctrineWrapper::class,
@@ -478,7 +490,7 @@ class PrimaryReadReplicaConnectionTest extends TestCase
                     'port'     => 3309,
                     'path'     => ':memory',
                     'memory'   => true,
-                ]
+                ],
             ],
             'primary' => [
                 'user'     => 'homestead1',
@@ -491,16 +503,16 @@ class PrimaryReadReplicaConnectionTest extends TestCase
             'defaultTableOptions' => [
                 'charset' => 'utf8mb4',
                 'collate' => 'utf8mb4_unicode_ci',
-            ]
+            ],
         ];
     }
 
     /**
      * Returns dummy input configuration for testing Sqlite connections.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getSqliteInputConfig()
+    private function getSqliteInputConfig(): array
     {
         $inputConfigSqlite = $this->getInputConfigwithArrayOfReplicasInReadKey();
         unset($inputConfigSqlite['read'][0]['database']);
@@ -513,9 +525,9 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Returns already resolved mysql configuration.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getResolvedMysqlConfig()
+    private function getResolvedMysqlConfig(): array
     {
         return [
             'driver'      => 'pdo_mysql',
@@ -526,16 +538,16 @@ class PrimaryReadReplicaConnectionTest extends TestCase
             'charset'     => 'charset',
             'port'        => 'port',
             'unix_socket' => 'unix_socket',
-            'prefix'      => 'prefix'
+            'prefix'      => 'prefix',
         ];
     }
 
     /**
      * Returns already resolved oci configuration.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getResolvedOracleConfig()
+    private function getResolvedOracleConfig(): array
     {
         return [
             'driver'      => 'oci8',
@@ -550,25 +562,25 @@ class PrimaryReadReplicaConnectionTest extends TestCase
     /**
      * Returns already resolved sqlite configuration.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getResolvedSqliteConfig()
+    private function getResolvedSqliteConfig(): array
     {
         return [
             'driver'   => 'pdo_sqlite',
             'path'     => ':memory',
             'user'     => 'homestead',
             'password' => 'secret',
-            'memory'   => true
+            'memory'   => true,
         ];
     }
 
     /**
      * Returns already resolved pgsql configuration.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getResolvedPgqsqlConfig()
+    private function getResolvedPgqsqlConfig(): array
     {
         return [
             'driver'      => 'pgsql',

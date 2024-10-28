@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Middleware;
 
 use Doctrine\ORM\EntityManager;
@@ -21,37 +23,31 @@ use Mockery\Mock;
 
 class SubstituteBindingsTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    private $registry;
+    /** @var Mock */
+    private ManagerRegistry $registry;
 
-    /**
-     * @var Mock
-     */
-    private $em;
+    /** @var Mock */
+    private EntityManager $em;
 
-    /**
-     * @var Mock
-     */
-    private $repository;
+    /** @var Mock */
+    private ObjectRepository $repository;
 
     public function setUp(): void
     {
-        $this->registry     = m::mock(ManagerRegistry::class);
-        $this->em           = m::mock(EntityManager::class);
-        $this->repository   = m::mock(ObjectRepository::class);
+        $this->registry   = m::mock(ManagerRegistry::class);
+        $this->em         = m::mock(EntityManager::class);
+        $this->repository = m::mock(ObjectRepository::class);
 
         parent::setUp();
     }
 
-    protected function getRouter()
+    protected function getRouter(): Router
     {
-        $container = new Container;
-        $container->bind(CallableDispatcherContract::class, fn ($app) => new CallableDispatcher($app));
-        $router    = new Router(new Dispatcher, $container);
+        $container = new Container();
+        $container->bind(CallableDispatcherContract::class, static fn ($app) => new CallableDispatcher($app));
+        $router = new Router(new Dispatcher(), $container);
 
-        $container->singleton(Registrar::class, function () use ($router) {
+        $container->singleton(Registrar::class, static function () use ($router) {
             return $router;
         });
 
@@ -62,12 +58,12 @@ class SubstituteBindingsTest extends TestCase
         return $router;
     }
 
-    protected function mockRegistry()
+    protected function mockRegistry(): void
     {
         $this->registry->shouldReceive('getRepository')->once()->with('LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntity')->andReturn($this->repository);
     }
 
-    public function test_entity_binding()
+    public function testEntityBinding(): void
     {
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
@@ -84,7 +80,7 @@ class SubstituteBindingsTest extends TestCase
         $this->assertEquals('namevalue', $router->dispatch(Request::create('foo/1', 'GET'))->getContent());
     }
 
-    public function test_entity_binding_expect_entity_not_found_exception()
+    public function testEntityBindingExpectEntityNotFoundException(): void
     {
         $this->expectException('Doctrine\ORM\EntityNotFoundException');
 
@@ -101,7 +97,7 @@ class SubstituteBindingsTest extends TestCase
         $router->dispatch(Request::create('foo/1', 'GET'))->getContent();
     }
 
-    public function test_entity_binding_get_null_entity()
+    public function testEntityBindingGetNullEntity(): void
     {
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
@@ -115,7 +111,7 @@ class SubstituteBindingsTest extends TestCase
         $this->assertEquals('', $router->dispatch(Request::create('foo/1', 'GET'))->getContent());
     }
 
-    public function test_binding_value()
+    public function testBindingValue(): void
     {
         $router = $this->getRouter();
         $router->get('foo/{value}', [
@@ -133,7 +129,7 @@ class SubstituteBindingsTest extends TestCase
         $this->assertEquals('request', $router->dispatch(Request::create('doc/trine', 'GET'))->getContent());
     }
 
-    public function test_controller_entity_binding()
+    public function testControllerEntityBinding(): void
     {
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
@@ -150,7 +146,7 @@ class SubstituteBindingsTest extends TestCase
         $this->assertEquals('namevalue', $router->dispatch(Request::create('foo/1', 'GET'))->getContent());
     }
 
-    public function test_not_id_binding()
+    public function testNotIdBinding(): void
     {
         $router = $this->getRouter();
         $router->get('foo/{entity}', [
@@ -167,7 +163,7 @@ class SubstituteBindingsTest extends TestCase
         $this->assertEquals(1, $router->dispatch(Request::create('foo/NAMEVALUE', 'GET'))->getContent());
     }
 
-    public function test_for_typed_value_binding()
+    public function testForTypedValueBinding(): void
     {
         $router = $this->getRouter();
         $router->get('foo/{value}', [
