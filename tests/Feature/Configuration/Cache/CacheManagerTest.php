@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 
 use Illuminate\Contracts\Config\Repository;
@@ -15,20 +17,11 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class CacheManagerTest extends TestCase
 {
-    /**
-     * @var CacheManager
-     */
-    protected $manager;
+    protected CacheManager $manager;
 
-    /**
-     * @var Container
-     */
-    protected $app;
+    protected Container $app;
 
-    /**
-     * @var Repository
-     */
-    protected $config;
+    protected Repository $config;
 
     protected function setUp(): void
     {
@@ -37,13 +30,13 @@ class CacheManagerTest extends TestCase
         $this->app->shouldReceive('get')->with('doctrine.cache.default', 'array')->andReturn('array');
 
         $this->manager = new CacheManager(
-            $this->app
+            $this->app,
         );
 
         parent::setUp();
     }
 
-    public function test_driver_returns_the_default_driver()
+    public function testDriverReturnsTheDefaultDriver(): void
     {
         $this->app->shouldReceive('resolve')->andReturn(new ArrayCacheProvider());
 
@@ -51,10 +44,10 @@ class CacheManagerTest extends TestCase
         $this->assertInstanceOf(ArrayAdapter::class, $this->manager->driver()->resolve());
     }
 
-    public function test_driver_can_return_a_given_driver()
+    public function testDriverCanReturnAGivenDriver(): void
     {
         $config = m::mock(Repository::class);
-        $app = m::mock(Application::class);
+        $app    = m::mock(Application::class);
 
         $this->app->shouldReceive('resolve')->andReturn(new FileCacheProvider(
             $config,
@@ -64,33 +57,33 @@ class CacheManagerTest extends TestCase
         $this->assertInstanceOf(FileCacheProvider::class, $this->manager->driver());
     }
 
-    public function test_cant_resolve_unsupported_drivers()
+    public function testCantResolveUnsupportedDrivers(): void
     {
         $this->expectException(DriverNotFound::class);
         $this->manager->driver('non-existing');
     }
 
-    public function test_can_create_custom_drivers()
+    public function testCanCreateCustomDrivers(): void
     {
-        $this->manager->extend('new', function () {
+        $this->manager->extend('new', static function () {
             return 'provider';
         });
 
         $this->assertEquals('provider', $this->manager->driver('new'));
     }
 
-    public function test_can_use_application_when_extending()
+    public function testCanUseApplicationWhenExtending(): void
     {
-        $this->manager->extend('new', function ($app) {
+        $this->manager->extend('new', function ($app): void {
             $this->assertInstanceOf(Container::class, $app);
         });
 
         $this->assertTrue(true);
     }
 
-    public function test_can_replace_an_existing_driver()
+    public function testCanReplaceAnExistingDriver(): void
     {
-        $this->manager->extend('memcache', function () {
+        $this->manager->extend('memcache', static function () {
             return 'provider';
         });
 

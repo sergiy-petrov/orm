@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -11,15 +13,9 @@ use Mockery as m;
 
 class MetaDataManagerTest extends TestCase
 {
-    /**
-     * @var MetaDataManager
-     */
-    protected $manager;
+    protected MetaDataManager $manager;
 
-    /**
-     * @var Container
-     */
-    protected $app;
+    protected Container $app;
 
     protected function setUp(): void
     {
@@ -27,46 +23,46 @@ class MetaDataManagerTest extends TestCase
         $this->app->shouldReceive('make')->andReturn(m::self());
 
         $this->manager = new MetaDataManager(
-            $this->app
+            $this->app,
         );
 
         parent::setUp();
     }
 
-    public function test_driver_returns_the_default_driver()
+    public function testDriverReturnsTheDefaultDriver(): void
     {
         $this->app->shouldReceive('resolve')->andReturn(new XmlDriver('locator', '.xml'));
 
         $this->assertInstanceOf(XmlDriver::class, $this->manager->driver());
     }
 
-    public function test_cant_resolve_unsupported_drivers()
+    public function testCantResolveUnsupportedDrivers(): void
     {
         $this->expectException(DriverNotFound::class);
         $this->manager->driver('non-existing');
     }
 
-    public function test_can_create_custom_drivers()
+    public function tetsCanCreateCustomDrivers(): void
     {
-        $this->manager->extend('new', function () {
+        $this->manager->extend('new', static function () {
             return 'configuration';
         });
 
         $this->assertEquals('configuration', $this->manager->driver('new'));
     }
 
-    public function test_can_use_application_when_extending()
+    public function testCanUseApplicationWhenExtending(): void
     {
-        $this->manager->extend('new', function ($app) {
+        $this->manager->extend('new', function ($app): void {
             $this->assertInstanceOf(Container::class, $app);
         });
 
         $this->assertTrue(true);
     }
 
-    public function test_can_replace_an_existing_driver()
+    public function testCanReplaceAnExistingDriver(): void
     {
-        $this->manager->extend('xml', function () {
+        $this->manager->extend('xml', static function () {
             return 'configuration';
         });
 

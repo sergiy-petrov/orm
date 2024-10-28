@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -10,10 +12,7 @@ use Mockery as m;
 
 class XmlTest extends TestCase
 {
-    /**
-     * @var Xml
-     */
-    protected $meta;
+    protected Xml $meta;
 
     protected function setUp(): void
     {
@@ -22,33 +21,31 @@ class XmlTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $resolved = $this->meta->resolve([
             'paths'   => ['entities'],
             'dev'     => true,
-            'proxies' => ['path' => 'path']
+            'proxies' => ['path' => 'path'],
         ]);
 
         $this->assertInstanceOf(MappingDriver::class, $resolved);
         $this->assertInstanceOf(XmlDriver::class, $resolved);
     }
 
-    public function test_can_specify_extension_without_error()
+    public function testCanSpecifyExtensionWithoutError(): void
     {
         $resolved = $this->meta->resolve([
             'paths'     => 'entities',
-            'extension' => '.orm.xml'
+            'extension' => '.orm.xml',
         ]);
 
         $this->assertInstanceOf(XmlDriver::class, $resolved);
     }
 
-    public function test_can_not_specify_extension_without_error()
+    public function testCanNotSpecifyExtensionWithoutError(): void
     {
-        $resolved = $this->meta->resolve([
-            'paths'     => 'entities'
-        ]);
+        $resolved = $this->meta->resolve(['paths' => 'entities']);
 
         $this->assertInstanceOf(XmlDriver::class, $resolved);
     }

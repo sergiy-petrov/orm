@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 //namespace Configuration\Cache;
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 
 use Illuminate\Contracts\Cache\Factory;
@@ -11,22 +14,16 @@ use Mockery as m;
 
 class IlluminateCacheProviderTest extends TestCase
 {
-    /**
-     * @var IlluminateCacheProvider
-     */
-    private $driver;
+    private IlluminateCacheProvider $driver;
 
-    /**
-     * @var Repository|m\LegacyMockInterface|m\MockInterface
-     */
-    private $repository;
+    private Repository|m\LegacyMockInterface|m\MockInterface $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = m::mock(Repository::class);
-        $manager = m::mock(Factory::class);
+        $manager          = m::mock(Factory::class);
         $manager->shouldReceive('store')
             ->once()
             ->andReturn($this->repository);
@@ -36,7 +33,7 @@ class IlluminateCacheProviderTest extends TestCase
         parent::setUp();
     }
 
-    public function test_driver_returns_provided_namespace(): void
+    public function testDriverReturnsProvidedNamespace(): void
     {
         $this->repository->shouldReceive('getMultiple')
             ->withSomeOfArgs(['namespace_item'])
@@ -48,7 +45,7 @@ class IlluminateCacheProviderTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function test_driver_has_no_namespace_by_default(): void
+    public function testDriverHasNoNamespaceByDefault(): void
     {
         $this->repository->shouldReceive('getMultiple')
             ->withSomeOfArgs(['item'])

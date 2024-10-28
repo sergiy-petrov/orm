@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery;
 
-abstract class AbstractCacheProviderTest extends TestCase
+abstract class CacheProviderTest extends TestCase
 {
-    abstract public function getProvider();
+    abstract public function getProvider(): mixed;
 
-    abstract public function getExpectedInstance();
+    abstract public function getExpectedInstance(): mixed;
 
-    public function test_can_resolve()
+    public function testCanResolve(): void
     {
         $this->assertInstanceOf($this->getExpectedInstance(), $this->getProvider()->resolve());
     }
