@@ -43,7 +43,7 @@ or in the docs directory.
 Versions
 --------
 
-* Version 3 supports DBAL ^4.0 and ORM ^3.0.  See the [upgrade guide](https://laravel-doctrine-orm-official.readthedocs.io/en/latest/upgrade.html) for more information.
+* Version 3 supports DBAL ^4.0, ORM ^3.0, and PHP 8.2.  See the [upgrade guide](https://laravel-doctrine-orm-official.readthedocs.io/en/latest/upgrade.html) for more information.
 * Version 2 supports Laravel 9 - 11, DBAL ^3.0 and ORM ^2.0.
 * Version 1 supports Laravel 6 - 9, DBAL ^2.0 and ORM ^2.0.
   See [documentation in version 2](https://github.com/laravel-doctrine/orm/tree/2.0?tab=readme-ov-file#versions)

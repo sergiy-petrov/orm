@@ -38,6 +38,7 @@ use LaravelDoctrineTest\ORM\Assets\SubscriberStub;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionException;
 use ReflectionObject;
@@ -1008,15 +1009,15 @@ class EntityManagerFactoryTest extends TestCase
      *
      * @return mixed[]
      */
-    public function getTestPrimaryReadReplicaConnectionData(): array
+    public static function getTestPrimaryReadReplicaConnectionData(): array
     {
         $out = [];
 
         // Case #0. Simple valid configuration, everything should go well.
-        $out[] = [$this->getDummyBaseInputConfig()];
+        $out[] = [self::getDummyBaseInputConfig()];
 
         //Case #1. No read DBs set.
-        $inputConfig = $this->getDummyBaseInputConfig();
+        $inputConfig = self::getDummyBaseInputConfig();
         unset($inputConfig['read']);
 
         $out[] = [
@@ -1026,7 +1027,7 @@ class EntityManagerFactoryTest extends TestCase
         ];
 
         //Case #2. 'read' isn't an array
-        $inputConfig         = $this->getDummyBaseInputConfig();
+        $inputConfig         = self::getDummyBaseInputConfig();
         $inputConfig['read'] = 'test';
 
         $out[] = [
@@ -1036,7 +1037,7 @@ class EntityManagerFactoryTest extends TestCase
         ];
 
         //Case #3. 'read' has non array entries.
-        $inputConfig           = $this->getDummyBaseInputConfig();
+        $inputConfig           = self::getDummyBaseInputConfig();
         $inputConfig['read'][] = 'test';
 
         $out[] = [
@@ -1046,7 +1047,7 @@ class EntityManagerFactoryTest extends TestCase
         ];
 
         //Case #4. 'read' has empty entries.
-        $inputConfig           = $this->getDummyBaseInputConfig();
+        $inputConfig           = self::getDummyBaseInputConfig();
         $inputConfig['read'][] = [];
 
         $out[] = [
@@ -1056,7 +1057,7 @@ class EntityManagerFactoryTest extends TestCase
         ];
 
         //Case #5. 'read' has empty first entry. (reported by maxbrokman.)
-        $inputConfig            = $this->getDummyBaseInputConfig();
+        $inputConfig            = self::getDummyBaseInputConfig();
         $inputConfig['read'][0] = [];
 
         $out[] = [
@@ -1072,9 +1073,8 @@ class EntityManagerFactoryTest extends TestCase
      * Check if config is handled correctly.
      *
      * @param mixed[] $inputConfig
-     *
-     * @dataProvider getTestPrimaryReadReplicaConnectionData
      */
+    #[DataProvider('getTestPrimaryReadReplicaConnectionData')]
     public function testPrimaryReadReplicaConnection(
         array $inputConfig,
         string $expectedException = '',
@@ -1134,7 +1134,7 @@ class EntityManagerFactoryTest extends TestCase
      *
      * @return mixed[]
      */
-    private function getDummyBaseInputConfig(): array
+    private static function getDummyBaseInputConfig(): array
     {
         return [
             'driver'    => 'mysql',

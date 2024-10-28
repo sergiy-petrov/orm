@@ -10,7 +10,7 @@ use LaravelDoctrine\ORM\Configuration\Cache\MemcachedCacheProvider;
 use Mockery as m;
 use Psr\Cache\CacheItemPoolInterface;
 
-class MemcachedCacheProviderTest extends CacheProviderTest
+class MemcachedCacheProviderTest extends CacheProvider
 {
     public function getProvider(): mixed
     {

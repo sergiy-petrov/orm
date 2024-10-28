@@ -7,7 +7,7 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery;
 
-abstract class CacheProviderTest extends TestCase
+abstract class CacheProvider extends TestCase
 {
     abstract public function getProvider(): mixed;
 

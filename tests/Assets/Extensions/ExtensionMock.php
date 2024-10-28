@@ -14,7 +14,7 @@ class ExtensionMock implements Extension
     public function addSubscribers(EventManager $manager, EntityManagerInterface $em): void
     {
         // Confirm it gets called
-        (new ExtensionManagerTest())->assertTrue(true);
+        (new ExtensionManagerTest('test'))->assertTrue(true);
     }
 
     /** @return mixed[] */

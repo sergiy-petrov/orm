@@ -4,7 +4,7 @@ composer.phar
 composer.lock
 .DS_Store
 .phpcs-cache
-.phpunit.result.cache
+.phpunit.cache
 
 /tests/Stubs/storage/framework/views/*
 !/tests/Stubs/storage/framework/views/.gitkeep

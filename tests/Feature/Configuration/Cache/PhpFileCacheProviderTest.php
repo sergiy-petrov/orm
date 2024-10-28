@@ -9,7 +9,7 @@ use LaravelDoctrine\ORM\Configuration\Cache\PhpFileCacheProvider;
 use Mockery as m;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
-class PhpFileCacheProviderTest extends CacheProviderTest
+class PhpFileCacheProviderTest extends CacheProvider
 {
     public function getProvider(): mixed
     {
