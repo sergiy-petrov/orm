@@ -4,9 +4,9 @@ namespace LaravelDoctrineTest\ORM\Assets\Testing;
 
 class ChildHydrateableClass extends AncestorHydrateableClass
 {
-    private $description;
+    private string $description = '';
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

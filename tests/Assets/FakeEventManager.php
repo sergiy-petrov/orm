@@ -2,6 +2,8 @@
 
 namespace LaravelDoctrineTest\ORM\Assets;
 
-class FakeEventManager extends \Doctrine\Common\EventManager
+use Doctrine\Common\EventManager;
+
+class FakeEventManager extends EventManager
 {
 }

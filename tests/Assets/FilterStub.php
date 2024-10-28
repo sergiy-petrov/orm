@@ -2,9 +2,12 @@
 
 namespace LaravelDoctrineTest\ORM\Assets;
 
-class FilterStub extends \Doctrine\ORM\Query\Filter\SQLFilter
+use Doctrine\ORM\Query\Filter\SQLFilter;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
+class FilterStub extends SQLFilter
 {
-    public function addFilterConstraint(\Doctrine\ORM\Mapping\ClassMetadata $targetEntity, string $targetTableAlias): string
+    public function addFilterConstraint(ClassMetadata $targetEntity, string $targetTableAlias): string
     {
         return '';
     }

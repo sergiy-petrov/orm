@@ -2,7 +2,9 @@
 
 namespace LaravelDoctrineTest\ORM\Assets\Middleware;
 
-class BindableEntityWithInterface implements \LaravelDoctrine\ORM\Contracts\UrlRoutable
+use LaravelDoctrine\ORM\Contracts\UrlRoutable;
+
+class BindableEntityWithInterface implements UrlRoutable
 {
     public $id;
 
