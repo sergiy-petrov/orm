@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LaravelDoctrineTest\ORM\Assets\Testing;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;

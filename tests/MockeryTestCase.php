@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -10,11 +12,11 @@ abstract class MockeryTestCase extends TestCase
     use MockeryPHPUnitIntegration;
     use MockeryTestCaseSetUp;
 
-    protected function mockeryTestSetUp()
+    protected function mockeryTestSetUp(): void
     {
     }
 
-    protected function mockeryTestTearDown()
+    protected function mockeryTestTearDown(): void
     {
     }
 }

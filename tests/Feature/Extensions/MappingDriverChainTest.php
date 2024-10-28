@@ -11,7 +11,6 @@ use Doctrine\Persistence\Mapping\Driver\SymfonyFileLocator;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 
 /**
  * NOTE:  This test was degraded while refactoring for ORM 3.
