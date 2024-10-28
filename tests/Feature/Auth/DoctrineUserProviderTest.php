@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Auth;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,34 +12,18 @@ use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableMock;
 use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableWithNonEmptyConstructorMock;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use Mockery\Mock;
 
 class DoctrineUserProviderTest extends TestCase
 {
-    /**
-     * @var Mock
-     */
-    protected $hasher;
+    protected Hasher $hasher;
 
-    /**
-     * @var Mock
-     */
-    protected $em;
+    protected EntityManagerInterface $em;
 
-    /**
-     * @var DoctrineUserProvider
-     */
-    protected $provider;
+    protected DoctrineUserProvider $provider;
 
-    /**
-     * @var DoctrineUserProvider
-     */
-    protected $providerNonEmpty;
+    protected DoctrineUserProvider $providerNonEmpty;
 
-    /**
-     * @var Mock
-     */
-    protected $repo;
+    protected EntityRepository $repo;
 
     protected function setUp(): void
     {
@@ -45,25 +31,25 @@ class DoctrineUserProviderTest extends TestCase
         $this->em     = m::mock(EntityManagerInterface::class);
         $this->repo   = m::mock(EntityRepository::class);
 
-        $this->provider = new DoctrineUserProvider(
+        $this->provider         = new DoctrineUserProvider(
             $this->hasher,
             $this->em,
-            AuthenticableMock::class
+            AuthenticableMock::class,
         );
         $this->providerNonEmpty = new DoctrineUserProvider(
             $this->hasher,
             $this->em,
-            AuthenticableWithNonEmptyConstructorMock::class
+            AuthenticableWithNonEmptyConstructorMock::class,
         );
 
         parent::setUp();
     }
 
-    public function test_can_retrieve_by_id()
+    public function testCanRetrieveById(): void
     {
         $this->mockGetRepository();
 
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
         $this->repo->shouldReceive('find')
                    ->once()->with(1)
                    ->andReturn($user);
@@ -71,22 +57,22 @@ class DoctrineUserProviderTest extends TestCase
         $this->assertEquals($user, $this->provider->retrieveById(1));
     }
 
-    public function test_can_retrieve_by_token()
+    public function testCanRetrieveByToken(): void
     {
         $this->mockGetRepository();
 
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
         $this->repo->shouldReceive('findOneBy')
                    ->with([
                        'id'            => 1,
-                       'rememberToken' => 'myToken'
+                       'rememberToken' => 'myToken',
                    ])
                    ->once()->andReturn($user);
 
         $this->assertEquals($user, $this->provider->retrieveByToken(1, 'myToken'));
     }
 
-    public function test_can_retrieve_by_token_with_non_empty_constructor()
+    public function testCanRetrieveByTokenWithNonEmptyConstructor(): void
     {
         $this->mockGetRepository(AuthenticableWithNonEmptyConstructorMock::class);
 
@@ -94,16 +80,16 @@ class DoctrineUserProviderTest extends TestCase
         $this->repo->shouldReceive('findOneBy')
                    ->with([
                        'id'            => 1,
-                       'rememberToken' => 'myToken'
+                       'rememberToken' => 'myToken',
                    ])
                    ->once()->andReturn($user);
 
         $this->assertEquals($user, $this->providerNonEmpty->retrieveByToken(1, 'myToken'));
     }
 
-    public function test_can_update_remember_token()
+    public function testCanUpdateRememberToken(): void
     {
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
 
         $this->em->shouldReceive('persist')->once()->with($user);
         $this->em->shouldReceive('flush')->once()->withNoArgs();
@@ -113,26 +99,24 @@ class DoctrineUserProviderTest extends TestCase
         $this->assertEquals('newToken', $user->getRememberToken());
     }
 
-    public function test_can_retrieve_by_credentials()
+    public function testCanRetrieveByCredentials(): void
     {
         $this->mockGetRepository();
 
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
         $this->repo->shouldReceive('findOneBy')
-                   ->with([
-                       'email' => 'email',
-                   ])
+                   ->with(['email' => 'email'])
                    ->once()->andReturn($user);
 
         $this->assertEquals($user, $this->provider->retrieveByCredentials([
             'email'    => 'email',
-            'password' => 'password'
+            'password' => 'password',
         ]));
     }
 
-    public function test_can_validate_credentials()
+    public function testCanValidateCredentials(): void
     {
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
 
         $this->hasher->shouldReceive('check')->once()
                      ->with('myPassword', 'myPassword')
@@ -140,13 +124,13 @@ class DoctrineUserProviderTest extends TestCase
 
         $this->assertTrue($this->provider->validateCredentials(
             $user,
-            ['password' => 'myPassword']
+            ['password' => 'myPassword'],
         ));
     }
 
-    public function test_rehash_password_if_required_rehash()
+    public function testRehashPasswordIfRequriredRehash(): void
     {
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
 
         $this->hasher->shouldReceive('needsRehash')->once()->andReturn(true);
         $this->hasher->shouldReceive('make')->once()->andReturn('hashedPassword');
@@ -157,9 +141,9 @@ class DoctrineUserProviderTest extends TestCase
         $this->assertEquals('hashedPassword', $user->getPassword());
     }
 
-    public function test_rehash_password_if_required_rehash_force()
+    public function testRehashPasswordIfRequiredRehashForce(): void
     {
-        $user = new AuthenticableMock;
+        $user = new AuthenticableMock();
 
         $this->hasher->shouldReceive('needsRehash')->once()->andReturn(false);
         $this->hasher->shouldReceive('make')->once()->andReturn('hashedPassword');
@@ -170,7 +154,7 @@ class DoctrineUserProviderTest extends TestCase
         $this->assertEquals('hashedPassword', $user->getPassword());
     }
 
-    public function test_rehash_password_if_required_rehash_norehash_needed()
+    public function testRehashPasswordIfRequiredRehashNorehashNeeded(): void
     {
         $user = new AuthenticableMock();
         $user->setPassword('originalPassword');
@@ -181,7 +165,7 @@ class DoctrineUserProviderTest extends TestCase
         $this->assertEquals('originalPassword', $user->getPassword());
     }
 
-    protected function mockGetRepository($class = AuthenticableMock::class)
+    protected function mockGetRepository(string $class = AuthenticableMock::class): void
     {
         $this->em->shouldReceive('getRepository')
                  ->with($class)
