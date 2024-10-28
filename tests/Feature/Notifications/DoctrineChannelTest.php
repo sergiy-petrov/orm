@@ -11,9 +11,9 @@ use LaravelDoctrineTest\ORM\Assets\Notifications\NotifiableStub;
 use LaravelDoctrineTest\ORM\Assets\Notifications\NotificationDatabaseStub;
 use LaravelDoctrineTest\ORM\Assets\Notifications\NotificationInvalidStub;
 use LaravelDoctrineTest\ORM\Assets\Notifications\NotificationStub;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 class DoctrineChannelTest extends TestCase

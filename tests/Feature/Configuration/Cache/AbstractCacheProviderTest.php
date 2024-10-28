@@ -2,8 +2,8 @@
 
 namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery;
-use PHPUnit\Framework\TestCase;
 
 abstract class AbstractCacheProviderTest extends TestCase
 {

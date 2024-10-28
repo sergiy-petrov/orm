@@ -5,8 +5,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Resolvers;
 use Doctrine\ORM\Mapping\EntityListenerResolver as ResolverContract;
 use Illuminate\Contracts\Container\Container;
 use LaravelDoctrine\ORM\Resolvers\EntityListenerResolver;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
 

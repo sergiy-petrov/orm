@@ -4,7 +4,7 @@ namespace LaravelDoctrineTest\ORM\Feature\Serializers;
 
 use LaravelDoctrine\ORM\Serializers\Jsonable;
 use LaravelDoctrine\ORM\Serializers\JsonSerializer;
-use PHPUnit\Framework\TestCase;
+use LaravelDoctrineTest\ORM\TestCase;
 
 class JsonSerializerTest extends TestCase
 {

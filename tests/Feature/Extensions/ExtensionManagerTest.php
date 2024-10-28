@@ -13,9 +13,9 @@ use LaravelDoctrine\ORM\Extensions\ExtensionManager;
 use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock;
 use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock2;
 use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionWithFiltersMock;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class ExtensionManagerTest extends TestCase
 {

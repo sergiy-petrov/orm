@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Illuminate\Contracts\Container\Container;
 use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
 use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class MetaDataManagerTest extends TestCase
 {

@@ -9,9 +9,9 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Auth\Passwords\DoctrineTokenRepository;
 use LaravelDoctrineTest\ORM\Assets\Auth\Passwords\UserMock;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class DoctrineTokenRepositoryTest extends TestCase
 {

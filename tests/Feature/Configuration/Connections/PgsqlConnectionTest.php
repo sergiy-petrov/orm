@@ -4,9 +4,9 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\PgsqlConnection;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class PgsqlConnectionTest extends TestCase
 {

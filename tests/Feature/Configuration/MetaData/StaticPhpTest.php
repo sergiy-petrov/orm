@@ -5,8 +5,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\Driver\StaticPHPDriver;
 use LaravelDoctrine\ORM\Configuration\MetaData\StaticPhp;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class StaticPhpTest extends TestCase
 {

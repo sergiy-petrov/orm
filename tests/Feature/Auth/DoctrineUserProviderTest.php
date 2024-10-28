@@ -8,9 +8,9 @@ use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Auth\DoctrineUserProvider;
 use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableMock;
 use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableWithNonEmptyConstructorMock;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class DoctrineUserProviderTest extends TestCase
 {

@@ -4,9 +4,9 @@ namespace LaravelDoctrineTest\ORM\Feature\Notifications;
 
 use Doctrine\ORM\EntityManagerInterface;
 use LaravelDoctrine\ORM\Notifications\Notification;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use stdClass;
 

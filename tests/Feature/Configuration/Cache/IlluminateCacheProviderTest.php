@@ -6,8 +6,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 use Illuminate\Contracts\Cache\Factory;
 use Illuminate\Contracts\Cache\Repository;
 use LaravelDoctrine\ORM\Configuration\Cache\IlluminateCacheProvider;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class IlluminateCacheProviderTest extends TestCase
 {

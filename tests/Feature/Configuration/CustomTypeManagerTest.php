@@ -6,7 +6,7 @@ use Doctrine\DBAL\Exception as DBALException;
 use LaravelDoctrine\ORM\Configuration\CustomTypeManager;
 use LaravelDoctrineTest\ORM\Assets\Configuration\TypeMock;
 use LaravelDoctrineTest\ORM\Assets\Configuration\TypeMock2;
-use PHPUnit\Framework\TestCase;
+use LaravelDoctrineTest\ORM\TestCase;
 
 class CustomTypeManagerTest extends TestCase
 {

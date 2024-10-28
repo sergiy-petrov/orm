@@ -10,7 +10,7 @@ use Doctrine\ORM\ORMSetup as Setup;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker;
 use LaravelDoctrine\ORM\Testing\FactoryBuilder;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
+use LaravelDoctrineTest\ORM\MockeryTestCase;
 
 class FactoryBuilderTest extends MockeryTestCase
 {

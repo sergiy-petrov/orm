@@ -5,8 +5,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection as PrimaryReadReplicaDoctrineWrapper;
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\PrimaryReadReplicaConnection;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Basic unit tests for primary read-replica connection

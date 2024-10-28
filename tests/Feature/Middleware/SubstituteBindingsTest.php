@@ -15,9 +15,9 @@ use Illuminate\Routing\Router;
 use LaravelDoctrine\ORM\Middleware\SubstituteBindings;
 use LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntity;
 use LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntityWithInterface;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class SubstituteBindingsTest extends TestCase
 {

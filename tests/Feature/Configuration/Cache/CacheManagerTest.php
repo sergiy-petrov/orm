@@ -9,8 +9,8 @@ use LaravelDoctrine\ORM\Configuration\Cache\ArrayCacheProvider;
 use LaravelDoctrine\ORM\Configuration\Cache\CacheManager;
 use LaravelDoctrine\ORM\Configuration\Cache\FileCacheProvider;
 use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class CacheManagerTest extends TestCase

@@ -14,8 +14,8 @@ use LaravelDoctrine\ORM\DoctrineExtender;
 use LaravelDoctrine\ORM\DoctrineManager;
 use LaravelDoctrine\ORM\EntityManagerFactory;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class DoctrineManagerTest extends TestCase
 {

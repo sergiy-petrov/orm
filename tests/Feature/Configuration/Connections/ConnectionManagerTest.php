@@ -8,8 +8,8 @@ use LaravelDoctrine\ORM\Configuration\Connections\ConnectionManager;
 use LaravelDoctrine\ORM\Configuration\Connections\MysqlConnection;
 use LaravelDoctrine\ORM\Configuration\Connections\SqliteConnection;
 use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class ConnectionManagerTest extends TestCase
 {

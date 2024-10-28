@@ -4,7 +4,7 @@ namespace LaravelDoctrineTest\ORM\Feature\Serializers;
 
 use LaravelDoctrine\ORM\Serializers\Arrayable;
 use LaravelDoctrine\ORM\Serializers\ArraySerializer;
-use PHPUnit\Framework\TestCase;
+use LaravelDoctrineTest\ORM\TestCase;
 
 class ArraySerializerTest extends TestCase
 {

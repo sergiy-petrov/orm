@@ -4,7 +4,7 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration;
 
 use Illuminate\Support\Str;
 use LaravelDoctrine\ORM\Configuration\LaravelNamingStrategy;
-use PHPUnit\Framework\TestCase;
+use LaravelDoctrineTest\ORM\TestCase;
 
 class LaravelNamingStrategyTest extends TestCase
 {

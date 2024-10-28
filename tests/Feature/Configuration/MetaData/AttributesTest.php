@@ -4,8 +4,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 
 use LaravelDoctrine\ORM\Configuration\MetaData\Attributes;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class AttributesTest extends TestCase
 {
