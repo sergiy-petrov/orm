@@ -13,9 +13,9 @@ use LaravelDoctrine\ORM\Extensions\ExtensionManager;
 use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock;
 use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionMock2;
 use LaravelDoctrineTest\ORM\Assets\Extensions\ExtensionWithFiltersMock;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class ExtensionManagerTest extends TestCase
 {
@@ -64,6 +64,8 @@ class ExtensionManagerTest extends TestCase
         $this->driver        = m::mock(XmlDriver::class);
 
         $this->manager = $this->newManager();
+
+        parent::setUp();
     }
 
     public function test_register_extension()
@@ -199,6 +201,8 @@ class ExtensionManagerTest extends TestCase
         m::close();
 
         $this->manager = $this->newManager();
+
+        parent::tearDown();
     }
 
     protected function newManager()

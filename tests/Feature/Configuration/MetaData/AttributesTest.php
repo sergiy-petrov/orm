@@ -4,8 +4,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 
 use LaravelDoctrine\ORM\Configuration\MetaData\Attributes;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class AttributesTest extends TestCase
 {
@@ -17,6 +17,8 @@ class AttributesTest extends TestCase
     protected function setUp(): void
     {
         $this->meta = new Attributes();
+
+        parent::setUp();
     }
 
     public function test_can_resolve()
@@ -34,5 +36,7 @@ class AttributesTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

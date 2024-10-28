@@ -2,9 +2,9 @@
 
 namespace LaravelDoctrineTest\ORM\Feature\Serializers;
 
-use LaravelDoctrine\ORM\Serializers\Arrayable;
 use LaravelDoctrine\ORM\Serializers\ArraySerializer;
-use PHPUnit\Framework\TestCase;
+use LaravelDoctrineTest\ORM\Assets\Serializers\ArrayableEntity;
+use LaravelDoctrineTest\ORM\TestCase;
 
 class ArraySerializerTest extends TestCase
 {
@@ -16,6 +16,8 @@ class ArraySerializerTest extends TestCase
     protected function setUp(): void
     {
         $this->serializer = new ArraySerializer;
+
+        parent::setUp();
     }
 
     public function test_can_serialize_to_array()
@@ -31,31 +33,5 @@ class ArraySerializerTest extends TestCase
             'name' => 'NAMEVALUE',
             'list' => ['item1', 'item2']
         ], $array);
-    }
-}
-
-class ArrayableEntity
-{
-    use Arrayable;
-
-    protected $id = 'IDVALUE';
-
-    protected $name = 'NAMEVALUE';
-
-    protected $list = ['item1', 'item2'];
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function getList()
-    {
-        return $this->list;
     }
 }

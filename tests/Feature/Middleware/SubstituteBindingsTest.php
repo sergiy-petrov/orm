@@ -15,9 +15,9 @@ use Illuminate\Routing\Router;
 use LaravelDoctrine\ORM\Middleware\SubstituteBindings;
 use LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntity;
 use LaravelDoctrineTest\ORM\Assets\Middleware\BindableEntityWithInterface;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class SubstituteBindingsTest extends TestCase
 {
@@ -41,6 +41,8 @@ class SubstituteBindingsTest extends TestCase
         $this->registry     = m::mock(ManagerRegistry::class);
         $this->em           = m::mock(EntityManager::class);
         $this->repository   = m::mock(ObjectRepository::class);
+
+        parent::setUp();
     }
 
     protected function getRouter()
@@ -194,5 +196,7 @@ class SubstituteBindingsTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

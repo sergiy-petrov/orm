@@ -6,8 +6,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\Cache;
 use Illuminate\Contracts\Cache\Factory;
 use Illuminate\Contracts\Cache\Repository;
 use LaravelDoctrine\ORM\Configuration\Cache\IlluminateCacheProvider;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class IlluminateCacheProviderTest extends TestCase
 {
@@ -32,6 +32,8 @@ class IlluminateCacheProviderTest extends TestCase
             ->andReturn($this->repository);
 
         $this->driver = new IlluminateCacheProvider($manager);
+
+        parent::setUp();
     }
 
     public function test_driver_returns_provided_namespace(): void
@@ -61,5 +63,7 @@ class IlluminateCacheProviderTest extends TestCase
     public function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

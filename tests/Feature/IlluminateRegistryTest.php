@@ -9,9 +9,9 @@ use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use LaravelDoctrine\ORM\EntityManagerFactory;
 use LaravelDoctrine\ORM\IlluminateRegistry;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 
@@ -41,6 +41,8 @@ class IlluminateRegistryTest extends TestCase
             $this->container,
             $this->factory
         );
+
+        parent::setUp();
     }
 
     public function test_can_add_manager()
@@ -560,5 +562,7 @@ class IlluminateRegistryTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

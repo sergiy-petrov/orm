@@ -4,7 +4,7 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration;
 
 use Illuminate\Support\Str;
 use LaravelDoctrine\ORM\Configuration\LaravelNamingStrategy;
-use PHPUnit\Framework\TestCase;
+use LaravelDoctrineTest\ORM\TestCase;
 
 class LaravelNamingStrategyTest extends TestCase
 {
@@ -16,6 +16,8 @@ class LaravelNamingStrategyTest extends TestCase
     public function setUp(): void
     {
         $this->strategy = new LaravelNamingStrategy(new Str());
+
+        parent::setUp();
     }
 
     public function test_class_to_table_name()

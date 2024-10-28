@@ -8,9 +8,9 @@ use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Auth\DoctrineUserProvider;
 use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableMock;
 use LaravelDoctrineTest\ORM\Assets\Auth\AuthenticableWithNonEmptyConstructorMock;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class DoctrineUserProviderTest extends TestCase
 {
@@ -55,6 +55,8 @@ class DoctrineUserProviderTest extends TestCase
             $this->em,
             AuthenticableWithNonEmptyConstructorMock::class
         );
+
+        parent::setUp();
     }
 
     public function test_can_retrieve_by_id()
@@ -189,5 +191,7 @@ class DoctrineUserProviderTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

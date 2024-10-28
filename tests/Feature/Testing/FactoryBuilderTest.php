@@ -10,7 +10,7 @@ use Doctrine\ORM\ORMSetup as Setup;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker;
 use LaravelDoctrine\ORM\Testing\FactoryBuilder;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
+use LaravelDoctrineTest\ORM\MockeryTestCase;
 
 class FactoryBuilderTest extends MockeryTestCase
 {
@@ -74,6 +74,8 @@ class FactoryBuilderTest extends MockeryTestCase
 
         $this->entityManager->shouldReceive('persist');
         $this->entityManager->shouldReceive('flush');
+
+        parent::setUp();
     }
 
     protected function getFactoryBuilder(array $definitions = [], array $states = [], array $afterMaking = [], array $afterCreating = []): FactoryBuilder

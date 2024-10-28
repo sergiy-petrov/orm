@@ -32,9 +32,9 @@ use LaravelDoctrineTest\ORM\Assets\FakeEventManager;
 use LaravelDoctrineTest\ORM\Assets\FilterStub;
 use LaravelDoctrineTest\ORM\Assets\ListenerStub;
 use LaravelDoctrineTest\ORM\Assets\SubscriberStub;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionException;
 use ReflectionObject;
@@ -130,6 +130,8 @@ class EntityManagerFactoryTest extends TestCase
             $this->config,
             $this->listenerResolver
         );
+
+        parent::setUp();
     }
 
     protected function assertEntityManager(EntityManagerInterface $manager)
@@ -1181,6 +1183,8 @@ class EntityManagerFactoryTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 
     /**

@@ -4,9 +4,9 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\MysqlConnection;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class MysqlConnectionTest extends TestCase
 {
@@ -25,6 +25,8 @@ class MysqlConnectionTest extends TestCase
         $this->config = m::mock(Repository::class);
 
         $this->connection = new MysqlConnection($this->config);
+
+        parent::setUp();
     }
 
     public function test_can_resolve()
@@ -69,5 +71,7 @@ class MysqlConnectionTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

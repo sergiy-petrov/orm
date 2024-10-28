@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use InvalidArgumentException;
 use LaravelDoctrine\ORM\Validation\DoctrinePresenceVerifier;
 use LaravelDoctrineTest\ORM\Assets\Mock\CountableEntityMock;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class DoctrinePresenceVerifierTest extends TestCase
 {
@@ -53,6 +53,8 @@ class DoctrinePresenceVerifierTest extends TestCase
         $this->verifier = new DoctrinePresenceVerifier(
             $this->registry
         );
+
+        parent::setUp();
     }
 
     public function test_can_get_count()
@@ -271,5 +273,7 @@ class DoctrinePresenceVerifierTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

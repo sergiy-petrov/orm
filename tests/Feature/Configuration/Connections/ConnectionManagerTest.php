@@ -8,8 +8,8 @@ use LaravelDoctrine\ORM\Configuration\Connections\ConnectionManager;
 use LaravelDoctrine\ORM\Configuration\Connections\MysqlConnection;
 use LaravelDoctrine\ORM\Configuration\Connections\SqliteConnection;
 use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class ConnectionManagerTest extends TestCase
 {
@@ -39,6 +39,8 @@ class ConnectionManagerTest extends TestCase
         $this->manager = new ConnectionManager(
             $this->app
         );
+
+        parent::setUp();
     }
 
     public function test_driver_returns_the_default_driver()
@@ -99,5 +101,7 @@ class ConnectionManagerTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

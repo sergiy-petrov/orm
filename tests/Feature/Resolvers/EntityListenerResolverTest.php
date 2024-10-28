@@ -5,8 +5,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Resolvers;
 use Doctrine\ORM\Mapping\EntityListenerResolver as ResolverContract;
 use Illuminate\Contracts\Container\Container;
 use LaravelDoctrine\ORM\Resolvers\EntityListenerResolver;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
 
@@ -26,11 +26,15 @@ class EntityListenerResolverTest extends TestCase
     {
         $this->container = m::mock(Container::class);
         $this->resolver  = new EntityListenerResolver($this->container);
+
+        parent::setUp();
     }
 
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 
     public function testImplementsDoctrineInterface()

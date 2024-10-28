@@ -5,7 +5,7 @@ namespace LaravelDoctrineTest\ORM\Feature\Testing;
 use LaravelDoctrine\ORM\Testing\SimpleHydrator;
 use LaravelDoctrineTest\ORM\Assets\Testing\AncestorHydrateableClass;
 use LaravelDoctrineTest\ORM\Assets\Testing\ChildHydrateableClass;
-use PHPUnit\Framework\TestCase;
+use LaravelDoctrineTest\ORM\TestCase;
 
 class SimpleHydratorTest extends TestCase
 {

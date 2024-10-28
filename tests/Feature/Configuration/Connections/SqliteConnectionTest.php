@@ -4,9 +4,9 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\Connections;
 
 use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\SqliteConnection;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class SqliteConnectionTest extends TestCase
 {
@@ -25,6 +25,8 @@ class SqliteConnectionTest extends TestCase
         $this->config = m::mock(Repository::class);
 
         $this->connection = new SqliteConnection($this->config);
+
+        parent::setUp();
     }
 
     public function test_can_resolve()
@@ -80,5 +82,7 @@ class SqliteConnectionTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

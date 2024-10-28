@@ -14,8 +14,8 @@ use LaravelDoctrine\ORM\DoctrineExtender;
 use LaravelDoctrine\ORM\DoctrineManager;
 use LaravelDoctrine\ORM\EntityManagerFactory;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class DoctrineManagerTest extends TestCase
 {
@@ -54,6 +54,8 @@ class DoctrineManagerTest extends TestCase
         $this->manager = new DoctrineManager(
             $this->container
         );
+
+        parent::setUp();
     }
 
     public function test_can_extend_doctrine_on_existing_connection_with_callback()
@@ -185,6 +187,8 @@ class DoctrineManagerTest extends TestCase
     {
         m::close();
         BootChain::flush();
+
+        parent::tearDown();
     }
 
     public function assertExtendedCorrectly($configuration, $connection, $eventManager)

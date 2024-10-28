@@ -7,9 +7,9 @@ use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\DefaultFileLocator;
 use Doctrine\Persistence\Mapping\Driver\SymfonyFileLocator;
 use LaravelDoctrine\ORM\Extensions\MappingDriverChain;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 /**
  * NOTE:  This test was degraded while refactoring for ORM 3.
@@ -30,6 +30,8 @@ class MappingDriverChainTest extends TestCase
     {
         $this->driver = m::mock(XmlDriver::class);
         $this->chain  = new MappingDriverChain($this->driver, 'Namespace');
+
+        parent::setUp();
     }
 
     public function test_get_default_driver()
@@ -99,5 +101,7 @@ class MappingDriverChainTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

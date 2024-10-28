@@ -9,8 +9,8 @@ use LaravelDoctrine\ORM\Configuration\Cache\ArrayCacheProvider;
 use LaravelDoctrine\ORM\Configuration\Cache\CacheManager;
 use LaravelDoctrine\ORM\Configuration\Cache\FileCacheProvider;
 use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class CacheManagerTest extends TestCase
@@ -39,6 +39,8 @@ class CacheManagerTest extends TestCase
         $this->manager = new CacheManager(
             $this->app
         );
+
+        parent::setUp();
     }
 
     public function test_driver_returns_the_default_driver()
@@ -98,5 +100,7 @@ class CacheManagerTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

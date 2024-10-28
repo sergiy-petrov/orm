@@ -9,9 +9,9 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Contracts\Hashing\Hasher;
 use LaravelDoctrine\ORM\Auth\Passwords\DoctrineTokenRepository;
 use LaravelDoctrineTest\ORM\Assets\Auth\Passwords\UserMock;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
 use Mockery\Mock;
-use PHPUnit\Framework\TestCase;
 
 class DoctrineTokenRepositoryTest extends TestCase
 {
@@ -66,6 +66,8 @@ class DoctrineTokenRepositoryTest extends TestCase
             'hashkey',
             60
         );
+
+        parent::setUp();
     }
 
     public function test_can_create_a_token()
@@ -274,5 +276,7 @@ class DoctrineTokenRepositoryTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

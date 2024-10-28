@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Illuminate\Contracts\Container\Container;
 use LaravelDoctrine\ORM\Testing\Concerns\InteractsWithEntities;
+use LaravelDoctrineTest\ORM\MockeryTestCase;
 use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\ExpectationFailedException;
 
 class InteractsWithEntitiesTest extends MockeryTestCase
@@ -26,6 +26,8 @@ class InteractsWithEntitiesTest extends MockeryTestCase
             ->allows('make')
             ->with('em')
             ->andReturn($this->em);
+
+        parent::setUp();
     }
 
     public function testEntitiesMatchWithMatch()

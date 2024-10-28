@@ -5,8 +5,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use LaravelDoctrine\ORM\Configuration\MetaData\SimplifiedXml;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class SimplifiedXmlTest extends TestCase
 {
@@ -18,6 +18,8 @@ class SimplifiedXmlTest extends TestCase
     protected function setUp(): void
     {
         $this->meta = new SimplifiedXml();
+
+        parent::setUp();
     }
 
     public function test_can_resolve()
@@ -36,5 +38,7 @@ class SimplifiedXmlTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }

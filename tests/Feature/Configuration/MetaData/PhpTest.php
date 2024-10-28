@@ -5,8 +5,8 @@ namespace LaravelDoctrineTest\ORM\Feature\Configuration\MetaData;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\Driver\PHPDriver;
 use LaravelDoctrine\ORM\Configuration\MetaData\Php;
+use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class PhpTest extends TestCase
 {
@@ -18,6 +18,8 @@ class PhpTest extends TestCase
     protected function setUp(): void
     {
         $this->meta = new Php();
+
+        parent::setUp();
     }
 
     public function test_can_resolve()
@@ -35,5 +37,7 @@ class PhpTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+
+        parent::tearDown();
     }
 }
