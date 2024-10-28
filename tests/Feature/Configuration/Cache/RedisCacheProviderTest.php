@@ -10,7 +10,7 @@ use LaravelDoctrine\ORM\Configuration\Cache\RedisCacheProvider;
 use Mockery as m;
 use Psr\Cache\CacheItemPoolInterface;
 
-class RedisCacheProviderTest extends CacheProviderTest
+class RedisCacheProviderTest extends CacheProvider
 {
     public function getProvider(): mixed
     {
