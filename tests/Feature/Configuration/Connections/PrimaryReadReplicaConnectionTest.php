@@ -9,8 +9,8 @@ use Illuminate\Contracts\Config\Repository;
 use LaravelDoctrine\ORM\Configuration\Connections\PrimaryReadReplicaConnection;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery as m;
-
 use PHPUnit\Framework\Attributes\DataProvider;
+
 use function class_exists;
 
 /**
