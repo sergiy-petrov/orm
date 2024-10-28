@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
+use Doctrine\ORM\Cache;
+use Doctrine\ORM\Cache\CacheConfiguration;
 use Doctrine\ORM\Cache\CacheFactory;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\Decorator\EntityManagerDecorator;
@@ -13,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\ORM\Repository\RepositoryFactory;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Illuminate\Contracts\Cache\Factory;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
@@ -21,9 +25,8 @@ use LaravelDoctrine\ORM\Configuration\Connections\ConnectionManager;
 use LaravelDoctrine\ORM\Configuration\LaravelNamingStrategy;
 use LaravelDoctrine\ORM\Configuration\MetaData\MetaDataManager;
 use LaravelDoctrine\ORM\EntityManagerFactory;
-use LaravelDoctrine\ORM\Loggers\Logger;
-use LaravelDoctrine\ORM\Resolvers\EntityListenerResolver;
 use LaravelDoctrine\ORM\ORMSetupResolver;
+use LaravelDoctrine\ORM\Resolvers\EntityListenerResolver;
 use LaravelDoctrine\ORM\Testing\ConfigRepository;
 use LaravelDoctrineTest\ORM\Assets\AnotherListenerStub;
 use LaravelDoctrineTest\ORM\Assets\Decorator;
@@ -39,74 +42,40 @@ use Psr\Cache\CacheItemPoolInterface;
 use ReflectionException;
 use ReflectionObject;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+
+use function array_key_exists;
+use function count;
+use function rmdir;
 
 class EntityManagerFactoryTest extends TestCase
 {
-    /**
-     * @var CacheManager|Mock
-     */
-    protected $cache;
+    protected CacheManager $cache;
+    protected Repository|Mock $config;
+    protected ConnectionManager $connection;
+    protected MetaDataManager $meta;
+    protected Container $container;
+    protected EntityManagerFactory $factory;
+    protected Configuration|Mock $configuration;
+    protected EntityListenerResolver $listenerResolver;
+    protected MappingDriver $mappingDriver;
 
-    /**
-     * @var Repository|Mock
-     */
-    protected $config;
+    protected mixed $setup;
 
-    /**
-     * @var ConnectionManager
-     */
-    protected $connection;
+    /** @var string[]  */
+    protected array $caches = ['query', 'result', 'metadata'];
 
-    /**
-     * @var MetaDataManager
-     */
-    protected $meta;
-
-    /**
-     * @var Container|Mock
-     */
-    protected $container;
-
-    /**
-     * @var EntityManagerFactory
-     */
-    protected $factory;
-
-    /**
-     * @var Configuration|Mock
-     */
-    protected $configuration;
-
-    /**
-     * @var EntityListenerResolver|Mock
-     */
-    protected $listenerResolver;
-
-    /**
-     * @var MappingDriver
-     */
-    protected $mappingDriver;
-
-    protected $setup;
-
-    /**
-     * @var array
-     */
-    protected $caches = [ 'query', 'result', 'metadata' ];
-
-    /**
-     * @var array
-     */
-    protected $settings = [
+    /** @var mixed[]  */
+    protected array $settings = [
         'meta'       => 'xml',
         'connection' => 'mysql',
         'paths'      => ['Entities'],
         'proxies'    => [
             'path'          => 'dir',
             'auto_generate' => false,
-            'namespace'     => 'namespace'
+            'namespace'     => 'namespace',
         ],
-        'repository' => 'Repo'
+        'repository' => 'Repo',
     ];
 
     protected function setUp(): void
@@ -128,20 +97,20 @@ class EntityManagerFactoryTest extends TestCase
             $this->connection,
             $this->cache,
             $this->config,
-            $this->listenerResolver
+            $this->listenerResolver,
         );
 
         parent::setUp();
     }
 
-    protected function assertEntityManager(EntityManagerInterface $manager)
+    protected function assertEntityManager(EntityManagerInterface $manager): void
     {
         $this->assertInstanceOf(EntityManagerInterface::class, $manager);
         $this->assertInstanceOf(Connection::class, $manager->getConnection());
         $this->assertInstanceOf(Configuration::class, $manager->getConfiguration());
     }
 
-    public function test_entity_manager_gets_instantiated_correctly()
+    public function testEntityManagerGetsInstantiatedCorrectly(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -154,7 +123,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_debugbar_logger_can_be_enabled()
+    public function testDebugbarLoggerCanBeEnabled(): void
     {
         $this->disableSecondLevelCaching();
         $this->disableCustomCacheNamespace();
@@ -166,7 +135,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_custom_functions_can_be_enabled()
+    public function testCustomFunctionsCanBeEnabled(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -185,7 +154,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_second_level_caching_can_be_enabled()
+    public function testSecondLevelCachingCanBeEnabled(): void
     {
         $this->disableDebugbar();
         $this->disableCustomFunctions();
@@ -196,7 +165,7 @@ class EntityManagerFactoryTest extends TestCase
                      ->with('doctrine.cache.second_level', false)->once()
                      ->andReturn(false);
 
-        $cacheConfig = m::mock(\Doctrine\ORM\Cache\CacheConfiguration::class);
+        $cacheConfig = m::mock(CacheConfiguration::class);
 
         $cacheFactory = m::mock(CacheFactory::class);
         $cacheFactory->shouldReceive('createCache')->atLeast()->once();
@@ -218,7 +187,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_custom_cache_namespace_can_be_set()
+    public function testCustomCacheNamespaceCanBeSet(): void
     {
         $this->disableDebugbar();
         $this->disableCustomFunctions();
@@ -233,9 +202,7 @@ class EntityManagerFactoryTest extends TestCase
             $this->config->shouldNotReceive('get')
                          ->with('doctrine.cache.' . $cache, [])
                          ->once()
-                         ->andReturn([
-                            'namespace' => $cache,
-                        ])->byDefault();
+                         ->andReturn(['namespace' => $cache])->byDefault();
         }
 
         $cache = m::mock(Cache::class);
@@ -249,7 +216,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_can_register_paths()
+    public function testCanRegisterPaths(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -262,7 +229,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_can_set_filters()
+    public function testCanSetFilters(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -271,7 +238,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->enableLaravelNamingStrategy();
 
         $this->settings['filters'] = [
-            'name' => FilterStub::class
+            'name' => FilterStub::class,
         ];
 
         $this->configuration->shouldReceive('addFilter')
@@ -288,7 +255,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertTrue(array_key_exists('name', $manager->getFilters()->getEnabledFilters()));
     }
 
-    public function test_can_set_listeners()
+    public function testCanSetListeners(): void
     {
         $this->container->shouldReceive('make')
                 ->with(ListenerStub::class)
@@ -302,7 +269,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->enableLaravelNamingStrategy();
 
         $this->settings['events']['listeners'] = [
-            'name' => ListenerStub::class
+            'name' => ListenerStub::class,
         ];
 
         $manager = $this->factory->create($this->settings);
@@ -312,7 +279,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertTrue(array_key_exists('name', $manager->getEventManager()->getAllListeners()));
     }
 
-    public function test_can_set_multiple_listeners()
+    public function testCanSetMultipleListeners(): void
     {
         $this->container->shouldReceive('make')
                         ->with(ListenerStub::class)
@@ -332,8 +299,8 @@ class EntityManagerFactoryTest extends TestCase
         $this->settings['events']['listeners'] = [
             'name' => [
                 ListenerStub::class,
-                AnotherListenerStub::class
-            ]
+                AnotherListenerStub::class,
+            ],
         ];
 
         $manager = $this->factory->create($this->settings);
@@ -344,7 +311,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertCount(2, $manager->getEventManager()->getListeners('name'));
     }
 
-    public function test_setting_non_existent_listener_throws_exception()
+    public function testSettingNonExistentListenerThrowsException(): void
     {
         $reflectionException = new ReflectionException();
 
@@ -361,14 +328,12 @@ class EntityManagerFactoryTest extends TestCase
         $this->disableCustomFunctions();
         $this->enableLaravelNamingStrategy();
 
-        $this->settings['events']['listeners'] = [
-            'name' => 'ClassDoesNotExist'
-        ];
+        $this->settings['events']['listeners'] = ['name' => 'ClassDoesNotExist'];
 
         $this->factory->create($this->settings);
     }
 
-    public function test_can_set_subscribers()
+    public function testCanSetSubscribers(): void
     {
         $this->container->shouldReceive('make')
                 ->with(SubscriberStub::class)
@@ -382,7 +347,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->enableLaravelNamingStrategy();
 
         $this->settings['events']['subscribers'] = [
-            'name' => SubscriberStub::class
+            'name' => SubscriberStub::class,
         ];
 
         $manager = $this->factory->create($this->settings);
@@ -392,7 +357,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertTrue(array_key_exists('onFlush', $manager->getEventManager()->getAllListeners()));
     }
 
-    public function test_setting_non_existent_subscriber_throws_exception()
+    public function testSettingNonExistentSubscriberThrowsException(): void
     {
         $reflectionException = new ReflectionException();
 
@@ -409,14 +374,12 @@ class EntityManagerFactoryTest extends TestCase
         $this->disableCustomFunctions();
         $this->enableLaravelNamingStrategy();
 
-        $this->settings['events']['subscribers'] = [
-            'name' => 'ClassDoesNotExist'
-        ];
+        $this->settings['events']['subscribers'] = ['name' => 'ClassDoesNotExist'];
 
         $this->factory->create($this->settings);
     }
 
-    public function test_can_set_custom_naming_strategy()
+    public function testCanSetCustomNamingStrategy(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -438,7 +401,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_can_set_custom_quote_strategy()
+    public function testCanSetCustomQuoteStrategy(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -461,7 +424,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_can_decorate_the_entity_manager()
+    public function testCanDecorateTheEntityManager(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -478,7 +441,7 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertInstanceOf(EntityManagerDecorator::class, $manager);
     }
 
-    public function test_can_set_repository_factory()
+    public function testCanSetRepositoryFactory(): void
     {
         $this->disableDebugbar();
         $this->disableSecondLevelCaching();
@@ -503,14 +466,12 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertEntityManager($manager);
     }
 
-    public function test_illuminate_cache_provider_custom_store()
+    public function testIlluminateCacheProviderCustomStore(): void
     {
         m::resetContainer();
 
         $config = new ConfigRepository([
-            'database.connections.mysql' => [
-                'driver' => 'mysql'
-            ],
+            'database.connections.mysql' => ['driver' => 'mysql'],
             'doctrine' => [
                 'meta'       => 'xml',
                 'connection' => 'mysql',
@@ -518,32 +479,32 @@ class EntityManagerFactoryTest extends TestCase
                 'proxies'    => [
                     'path'          => 'dir',
                     'auto_generate' => false,
-                    'namespace'     => 'namespace'
+                    'namespace'     => 'namespace',
                 ],
 
                 'cache' => [
                     'metadata' => [
                         'driver' => 'illuminate',
-                        'store'  => 'myStoreName'
-                    ]
-                ]
+                        'store'  => 'myStoreName',
+                    ],
+                ],
             ],
             'doctrine.custom_datetime_functions' => [],
             'doctrine.custom_numeric_functions'  => [],
-            'doctrine.custom_string_functions'   => []
+            'doctrine.custom_string_functions'   => [],
         ]);
 
         $container = new \Illuminate\Container\Container();
-        $container->singleton(Repository::class, function () use ($config) {
+        $container->singleton(Repository::class, static function () use ($config) {
             return $config;
         });
 
         $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
-        $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
+        $factory = M::mock(Factory::class);
         $factory->shouldReceive('store')->with('myStoreName')->andReturn($cache);
 
-        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(Factory::class, static function () use ($factory) {
             return $factory;
         });
 
@@ -554,7 +515,7 @@ class EntityManagerFactoryTest extends TestCase
             new ConnectionManager($container),
             new CacheManager($container),
             $config,
-            new EntityListenerResolver($container)
+            new EntityListenerResolver($container),
         );
 
         $manager = $factory->create($config->get('doctrine'));
@@ -562,14 +523,12 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertInstanceOf(CacheItemPoolInterface::class, $manager->getConfiguration()->getMetadataCache());
     }
 
-    public function test_illuminate_cache_provider_redis()
+    public function testIlluminateCacheProviderRedis(): void
     {
         m::resetContainer();
 
         $config = new ConfigRepository([
-            'database.connections.mysql' => [
-                'driver' => 'mysql'
-            ],
+            'database.connections.mysql' => ['driver' => 'mysql'],
             'doctrine' => [
                 'meta'       => 'xml',
                 'connection' => 'mysql',
@@ -577,31 +536,29 @@ class EntityManagerFactoryTest extends TestCase
                 'proxies'    => [
                     'path'          => 'dir',
                     'auto_generate' => false,
-                    'namespace'     => 'namespace'
+                    'namespace'     => 'namespace',
                 ],
 
                 'cache' => [
-                    'metadata' => [
-                        'driver' => 'redis',
-                    ]
-                ]
+                    'metadata' => ['driver' => 'redis'],
+                ],
             ],
             'doctrine.custom_datetime_functions' => [],
             'doctrine.custom_numeric_functions'  => [],
-            'doctrine.custom_string_functions'   => []
+            'doctrine.custom_string_functions'   => [],
         ]);
 
         $container = new \Illuminate\Container\Container();
-        $container->singleton(Repository::class, function () use ($config) {
+        $container->singleton(Repository::class, static function () use ($config) {
             return $config;
         });
 
         $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
-        $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
+        $factory = M::mock(Factory::class);
         $factory->shouldReceive('store')->with('redis')->andReturn($cache);
 
-        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(Factory::class, static function () use ($factory) {
             return $factory;
         });
 
@@ -612,7 +569,7 @@ class EntityManagerFactoryTest extends TestCase
             new ConnectionManager($container),
             new CacheManager($container),
             $config,
-            new EntityListenerResolver($container)
+            new EntityListenerResolver($container),
         );
 
         $manager = $factory->create($config->get('doctrine'));
@@ -620,14 +577,12 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertInstanceOf(CacheItemPoolInterface::class, $manager->getConfiguration()->getMetadataCache());
     }
 
-    public function test_illuminate_cache_provider_invalid_store()
+    public function testIlluminateCacheProviderInvalidStore(): void
     {
         m::resetContainer();
 
         $config = new ConfigRepository([
-            'database.connections.mysql' => [
-                'driver' => 'mysql'
-            ],
+            'database.connections.mysql' => ['driver' => 'mysql'],
             'doctrine' => [
                 'meta'       => 'xml',
                 'connection' => 'mysql',
@@ -635,31 +590,29 @@ class EntityManagerFactoryTest extends TestCase
                 'proxies'    => [
                     'path'          => 'dir',
                     'auto_generate' => false,
-                    'namespace'     => 'namespace'
+                    'namespace'     => 'namespace',
                 ],
 
                 'cache' => [
-                    'metadata' => [
-                        'driver' => 'illuminate',
-                    ]
-                ]
+                    'metadata' => ['driver' => 'illuminate'],
+                ],
             ],
             'doctrine.custom_datetime_functions' => [],
             'doctrine.custom_numeric_functions'  => [],
-            'doctrine.custom_string_functions'   => []
+            'doctrine.custom_string_functions'   => [],
         ]);
 
         $container = new \Illuminate\Container\Container();
-        $container->singleton(Repository::class, function () use ($config) {
+        $container->singleton(Repository::class, static function () use ($config) {
             return $config;
         });
 
         $cache = M::mock(\Illuminate\Contracts\Cache\Repository::class);
 
-        $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
+        $factory = M::mock(Factory::class);
         $factory->shouldReceive('store')->with('myStoreName')->andReturn($cache);
 
-        $container->singleton(\Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(Factory::class, static function () use ($factory) {
             return $factory;
         });
 
@@ -670,7 +623,7 @@ class EntityManagerFactoryTest extends TestCase
             new ConnectionManager($container),
             new CacheManager($container),
             $config,
-            new EntityListenerResolver($container)
+            new EntityListenerResolver($container),
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -679,14 +632,12 @@ class EntityManagerFactoryTest extends TestCase
         $factory->create($config->get('doctrine'));
     }
 
-    public function test_php_file_cache_custom_path()
+    public function testPhpFileCacheCustomPath(): void
     {
         m::resetContainer();
 
         $config = new ConfigRepository([
-            'database.connections.mysql' => [
-                'driver' => 'mysql'
-            ],
+            'database.connections.mysql' => ['driver' => 'mysql'],
             'doctrine' => [
                 'meta'       => 'xml',
                 'connection' => 'mysql',
@@ -694,32 +645,32 @@ class EntityManagerFactoryTest extends TestCase
                 'proxies'    => [
                     'path'          => 'dir',
                     'auto_generate' => false,
-                    'namespace'     => 'namespace'
+                    'namespace'     => 'namespace',
                 ],
 
                 'cache' => [
                     'metadata' => [
                         'driver' => 'php_file',
-                        'path'   => 'tests/cache'
-                    ]
-                ]
+                        'path'   => 'tests/cache',
+                    ],
+                ],
             ],
             'doctrine.custom_datetime_functions' => [],
             'doctrine.custom_numeric_functions'  => [],
-            'doctrine.custom_string_functions'   => []
+            'doctrine.custom_string_functions'   => [],
         ]);
 
         $container = new \Illuminate\Container\Container();
-        $container->singleton(Repository::class, function () use ($config) {
+        $container->singleton(Repository::class, static function () use ($config) {
             return $config;
         });
 
         $cache = M::mock(Illuminate\Contracts\Cache\Repository::class);
 
-        $factory = M::mock(\Illuminate\Contracts\Cache\Factory::class);
+        $factory = M::mock(Factory::class);
         $factory->shouldReceive('store')->with('myStoreName')->andReturn($cache);
 
-        $container->singleton(Illuminate\Contracts\Cache\Factory::class, function () use ($factory) {
+        $container->singleton(Illuminate\Contracts\Cache\Factory::class, static function () use ($factory) {
             return $factory;
         });
 
@@ -730,30 +681,30 @@ class EntityManagerFactoryTest extends TestCase
             new ConnectionManager($container),
             new CacheManager($container),
             $config,
-            new EntityListenerResolver($container)
+            new EntityListenerResolver($container),
         );
 
         $manager = $factory->create($config->get('doctrine'));
 
-        $metadata_cache = $manager->getConfiguration()->getMetadataCache();
-        $this->assertInstanceOf(\Symfony\Component\Cache\Adapter\PhpFilesAdapter::class, $metadata_cache);
+        $metadataCache = $manager->getConfiguration()->getMetadataCache();
+        $this->assertInstanceOf(PhpFilesAdapter::class, $metadataCache);
 
-        $reflection_cache = new ReflectionObject($metadata_cache);
-        $directory_property = $reflection_cache->getProperty('directory');
-        $directory_property->setAccessible(true);
+        $reflectionCache   = new ReflectionObject($metadataCache);
+        $directoryProperty = $reflectionCache->getProperty('directory');
+        $directoryProperty->setAccessible(true);
 
-        $this->assertStringContainsString('tests/cache', $directory_property->getValue($metadata_cache));
+        $this->assertStringContainsString('tests/cache', $directoryProperty->getValue($metadataCache));
         rmdir(__DIR__ . '/../cache/doctrine-cache');
     }
 
-    public function test_wrapper_connection()
+    public function testWrapperConnection(): void
     {
         m::resetContainer();
 
         $config = new ConfigRepository([
             'database.connections.mysql' => [
                 'wrapperClass' => FakeConnection::class,
-                'driver'       => 'mysql'
+                'driver'       => 'mysql',
             ],
             'doctrine' => [
                 'meta'       => 'xml',
@@ -762,16 +713,16 @@ class EntityManagerFactoryTest extends TestCase
                 'proxies'    => [
                     'path'          => 'dir',
                     'auto_generate' => false,
-                    'namespace'     => 'namespace'
+                    'namespace'     => 'namespace',
                 ],
             ],
             'doctrine.custom_datetime_functions' => [],
             'doctrine.custom_numeric_functions'  => [],
-            'doctrine.custom_string_functions'   => []
+            'doctrine.custom_string_functions'   => [],
         ]);
 
         $container = new \Illuminate\Container\Container();
-        $container->singleton(Repository::class, function () use ($config) {
+        $container->singleton(Repository::class, static function () use ($config) {
             return $config;
         });
 
@@ -782,7 +733,7 @@ class EntityManagerFactoryTest extends TestCase
             new ConnectionManager($container),
             new CacheManager($container),
             $config,
-            new EntityListenerResolver($container)
+            new EntityListenerResolver($container),
         );
 
         $manager = $factory->create($config->get('doctrine'));
@@ -790,14 +741,12 @@ class EntityManagerFactoryTest extends TestCase
         $this->assertInstanceOf(FakeConnection::class, $manager->getConnection());
     }
 
-    public function test_custom_event_manager()
+    public function testCustomEventManager(): void
     {
         m::resetContainer();
 
         $config = new ConfigRepository([
-            'database.connections.mysql' => [
-                'driver'       => 'mysql'
-            ],
+            'database.connections.mysql' => ['driver' => 'mysql'],
             'doctrine' => [
                 'meta'       => 'xml',
                 'connection' => 'mysql',
@@ -805,17 +754,17 @@ class EntityManagerFactoryTest extends TestCase
                 'proxies'    => [
                     'path'          => 'dir',
                     'auto_generate' => false,
-                    'namespace'     => 'namespace'
+                    'namespace'     => 'namespace',
                 ],
-                'event_manager' => 'my_event_manager'
+                'event_manager' => 'my_event_manager',
             ],
             'doctrine.custom_datetime_functions' => [],
             'doctrine.custom_numeric_functions'  => [],
-            'doctrine.custom_string_functions'   => []
+            'doctrine.custom_string_functions'   => [],
         ]);
 
         $container = new \Illuminate\Container\Container();
-        $container->singleton(Repository::class, function () use ($config) {
+        $container->singleton(Repository::class, static function () use ($config) {
             return $config;
         });
 
@@ -828,7 +777,7 @@ class EntityManagerFactoryTest extends TestCase
             new ConnectionManager($container),
             new CacheManager($container),
             $config,
-            new EntityListenerResolver($container)
+            new EntityListenerResolver($container),
         );
 
         $manager = $factory->create($config->get('doctrine'));
@@ -839,10 +788,9 @@ class EntityManagerFactoryTest extends TestCase
     /**
      * MOCKS
      *
-     * @param array $driverConfig
-     * @param bool  $strictCallCountChecking
+     * @param mixed[] $driverConfig
      */
-    protected function mockConfig($driverConfig = ['driver' => 'mysql'], $strictCallCountChecking = true)
+    protected function mockConfig(array $driverConfig = ['driver' => 'mysql'], bool $strictCallCountChecking = true): void
     {
         $this->config = m::mock(Repository::class);
 
@@ -894,7 +842,7 @@ class EntityManagerFactoryTest extends TestCase
         $strictCallCountChecking ? $expectation->once() : $expectation->never();
     }
 
-    protected function mockCache()
+    protected function mockCache(): void
     {
         $this->cache = m::mock(CacheManager::class);
 
@@ -903,20 +851,16 @@ class EntityManagerFactoryTest extends TestCase
                     ->andReturn(new ArrayAdapter());
     }
 
-    protected function mockConnection()
+    protected function mockConnection(): void
     {
         $this->connection = m::mock(ConnectionManager::class);
         $this->connection->shouldReceive('driver')
                          ->once()
-                         ->with('mysql', [
-                             'driver' => 'mysql'
-                         ])
-                         ->andReturn([
-                             'driver' => 'pdo_mysql'
-                         ]);
+                         ->with('mysql', ['driver' => 'mysql'])
+                         ->andReturn(['driver' => 'pdo_mysql']);
     }
 
-    protected function mockMeta()
+    protected function mockMeta(): void
     {
         $this->mappingDriver = m::mock(MappingDriver::class);
         $this->mappingDriver->shouldReceive('addPaths')->with($this->settings['paths']);
@@ -929,21 +873,21 @@ class EntityManagerFactoryTest extends TestCase
                    ->andReturn($this->mappingDriver);
     }
 
-    protected function mockApp()
+    protected function mockApp(): void
     {
         $this->container = m::mock(Container::class);
     }
 
-    protected function mockResolver()
+    protected function mockResolver(): void
     {
         $this->listenerResolver = m::mock(EntityListenerResolver::class);
     }
 
-    protected function disableDebugbar()
+    protected function disableDebugbar(): void
     {
     }
 
-    protected function disableSecondLevelCaching()
+    protected function disableSecondLevelCaching(): void
     {
         $this->config->shouldReceive('get')
                      ->with('doctrine.cache.second_level', false)->atLeast()->once()
@@ -954,7 +898,7 @@ class EntityManagerFactoryTest extends TestCase
                             ->andReturn(false);
     }
 
-    protected function disableCustomCacheNamespace()
+    protected function disableCustomCacheNamespace(): void
     {
         $this->config->shouldReceive('get')
                      ->with('doctrine.cache.namespace')
@@ -962,14 +906,14 @@ class EntityManagerFactoryTest extends TestCase
                      ->andReturn(null);
     }
 
-    protected function disableCustomFunctions()
+    protected function disableCustomFunctions(): void
     {
         $this->configuration->shouldReceive('setCustomDatetimeFunctions');
         $this->configuration->shouldReceive('setCustomNumericFunctions');
         $this->configuration->shouldReceive('setCustomStringFunctions');
     }
 
-    protected function mockORMConfiguration()
+    protected function mockORMConfiguration(): void
     {
         $this->configuration = m::mock(Configuration::class);
         $this->configuration->shouldReceive('setSQLLogger');
@@ -1043,12 +987,12 @@ class EntityManagerFactoryTest extends TestCase
 
         $this->configuration->shouldReceive('getMiddlewares')->once()->andReturn([]);
 
-        $schema_manager_factory = new DefaultSchemaManagerFactory();
+        $schemaManagerFactory = new DefaultSchemaManagerFactory();
         $this->configuration->shouldReceive('setSchemaManagerFactory')->once();
-        $this->configuration->shouldReceive('getSchemaManagerFactory')->once()->andReturn($schema_manager_factory);
+        $this->configuration->shouldReceive('getSchemaManagerFactory')->once()->andReturn($schemaManagerFactory);
     }
 
-    protected function enableLaravelNamingStrategy()
+    protected function enableLaravelNamingStrategy(): void
     {
         $strategy = m::mock(LaravelNamingStrategy::class);
 
@@ -1062,9 +1006,9 @@ class EntityManagerFactoryTest extends TestCase
     /**
      * Data provider for testPrimaryReadReplicaConnection.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function getTestPrimaryReadReplicaConnectionData()
+    public function getTestPrimaryReadReplicaConnectionData(): array
     {
         $out = [];
 
@@ -1077,8 +1021,8 @@ class EntityManagerFactoryTest extends TestCase
 
         $out[] = [
             $inputConfig,
-            \InvalidArgumentException::class,
-            "Parameter 'read' must be set for read/write config."
+            InvalidArgumentException::class,
+            "Parameter 'read' must be set for read/write config.",
         ];
 
         //Case #2. 'read' isn't an array
@@ -1087,8 +1031,8 @@ class EntityManagerFactoryTest extends TestCase
 
         $out[] = [
             $inputConfig,
-            \InvalidArgumentException::class,
-            "Parameter 'read' must be an array containing multiple arrays."
+            InvalidArgumentException::class,
+            "Parameter 'read' must be an array containing multiple arrays.",
         ];
 
         //Case #3. 'read' has non array entries.
@@ -1097,8 +1041,8 @@ class EntityManagerFactoryTest extends TestCase
 
         $out[] = [
             $inputConfig,
-            \InvalidArgumentException::class,
-            "Parameter 'read' must be an array containing multiple arrays."
+            InvalidArgumentException::class,
+            "Parameter 'read' must be an array containing multiple arrays.",
         ];
 
         //Case #4. 'read' has empty entries.
@@ -1107,8 +1051,8 @@ class EntityManagerFactoryTest extends TestCase
 
         $out[] = [
             $inputConfig,
-            \InvalidArgumentException::class,
-            "Parameter 'read' config no. 2 is empty."
+            InvalidArgumentException::class,
+            "Parameter 'read' config no. 2 is empty.",
         ];
 
         //Case #5. 'read' has empty first entry. (reported by maxbrokman.)
@@ -1117,8 +1061,8 @@ class EntityManagerFactoryTest extends TestCase
 
         $out[] = [
             $inputConfig,
-            \InvalidArgumentException::class,
-            "Parameter 'read' config no. 0 is empty."
+            InvalidArgumentException::class,
+            "Parameter 'read' config no. 0 is empty.",
         ];
 
         return $out;
@@ -1127,17 +1071,15 @@ class EntityManagerFactoryTest extends TestCase
     /**
      * Check if config is handled correctly.
      *
-     * @param array  $inputConfig
-     * @param string $expectedException
-     * @param string $msg
+     * @param mixed[] $inputConfig
      *
      * @dataProvider getTestPrimaryReadReplicaConnectionData
      */
     public function testPrimaryReadReplicaConnection(
         array $inputConfig,
-        $expectedException = '',
-        $msg = ''
-    ) {
+        string $expectedException = '',
+        string $msg = '',
+    ): void {
         m::resetContainer();
 
         $this->mockApp();
@@ -1160,10 +1102,10 @@ class EntityManagerFactoryTest extends TestCase
             $this->connection,
             $this->cache,
             $this->config,
-            $this->listenerResolver
+            $this->listenerResolver,
         );
 
-        if (!empty($expectedException)) {
+        if (! empty($expectedException)) {
             $this->expectException($expectedException);
             $this->expectExceptionMessage($msg);
         } else {
@@ -1175,7 +1117,7 @@ class EntityManagerFactoryTest extends TestCase
         }
 
         $this->settings['connection'] = 'mysql';
-        $em = $factory->create($this->settings);
+        $em                           = $factory->create($this->settings);
 
         $this->assertInstanceOf(PrimaryReadReplicaConnection::class, $em->getConnection());
     }
@@ -1190,9 +1132,9 @@ class EntityManagerFactoryTest extends TestCase
     /**
      * Returns dummy base config for testing.
      *
-     * @return array
+     * @return mixed[]
      */
-    private function getDummyBaseInputConfig()
+    private function getDummyBaseInputConfig(): array
     {
         return [
             'driver'    => 'mysql',
@@ -1206,9 +1148,7 @@ class EntityManagerFactoryTest extends TestCase
             'prefix'    => '',
             'strict'    => false,
             'engine'    => null,
-            'write'     => [
-                'port' => 3307,
-            ],
+            'write'     => ['port' => 3307],
             'read' => [
                 [
                     'port'     => 3308,
@@ -1216,7 +1156,7 @@ class EntityManagerFactoryTest extends TestCase
                 ],
                 [
                     'host' => 'localhost2',
-                    'port' => 3309
+                    'port' => 3309,
                 ],
             ],
         ];
