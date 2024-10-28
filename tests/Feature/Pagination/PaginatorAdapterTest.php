@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelDoctrineTest\ORM\Feature\Pagination;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,11 +19,16 @@ use Illuminate\Pagination\AbstractPaginator;
 use LaravelDoctrine\ORM\Pagination\PaginatorAdapter;
 use LaravelDoctrineTest\ORM\TestCase;
 use Mockery;
+use Mockery\Mock;
 use stdClass;
+
+use function assert;
+
+use const PHP_INT_MAX;
 
 class PaginatorAdapterTest extends TestCase
 {
-    public function testMakesLaravelsPaginatorFromParams()
+    public function testMakesLaravelsPaginatorFromParams(): void
     {
         $em      = $this->mockEntityManager();
         $query   = (new Query($em))->setDQL('SELECT f FROM LaravelDoctrineTest\ORM\Assets\Entity\Foo f');
@@ -32,9 +40,9 @@ class PaginatorAdapterTest extends TestCase
         $this->assertEquals(2, $paginator->currentPage());
     }
 
-    public function testMakesLaravelsPaginatorFromRequest()
+    public function testMakesLaravelsPaginatorFromRequest(): void
     {
-        AbstractPaginator::currentPageResolver(function () {
+        AbstractPaginator::currentPageResolver(static function () {
             return 13;
         });
 
@@ -48,7 +56,7 @@ class PaginatorAdapterTest extends TestCase
         $this->assertEquals(13, $paginator->currentPage());
     }
 
-    public function testQueryParametersAreProducedInUrlFromParams()
+    public function testQueryParametersAreProducedInUrlFromParams(): void
     {
         $em      = $this->mockEntityManager();
         $query   = (new Query($em))->setDQL('SELECT f FROM LaravelDoctrineTest\ORM\Assets\Entity\Foo f');
@@ -62,7 +70,7 @@ class PaginatorAdapterTest extends TestCase
         $this->assertStringContainsString('foo=bar', $paginator->url(1));
     }
 
-    public function testQueryParametersAreProducedInUrlFromRequest()
+    public function testQueryParametersAreProducedInUrlFromRequest(): void
     {
         $em      = $this->mockEntityManager();
         $query   = (new Query($em))->setDQL('SELECT f FROM LaravelDoctrineTest\ORM\Assets\Entity\Foo f');
@@ -74,13 +82,10 @@ class PaginatorAdapterTest extends TestCase
         $this->assertStringContainsString('foo=bar', $paginator->url(1));
     }
 
-    /**
-     * @return EntityManagerInterface|\Mockery\Mock
-     */
-    private function mockEntityManager()
+    private function mockEntityManager(): EntityManagerInterface
     {
-        /** @var EntityManagerInterface|\Mockery\Mock $em */
-        $em         = Mockery::mock(EntityManagerInterface::class);
+        $em = Mockery::mock(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface || $em instanceof Mock);
         $config     = Mockery::mock(Configuration::class);
         $metadata   = Mockery::mock(ClassMetadata::class);
         $connection = Mockery::mock(Connection::class);
@@ -91,19 +96,19 @@ class PaginatorAdapterTest extends TestCase
         $config->shouldReceive('isSecondLevelCacheEnabled')->andReturn(false);
         $config->shouldReceive('getQueryCacheImpl')->andReturn(null);
         $config->shouldReceive('getQueryCache')->andReturn(null);
-        $config->shouldReceive('getQuoteStrategy')->andReturn(new DefaultQuoteStrategy);
+        $config->shouldReceive('getQuoteStrategy')->andReturn(new DefaultQuoteStrategy());
 
-        $id = new stdClass();
-        $id->fieldName = 'id';
+        $id             = new stdClass();
+        $id->fieldName  = 'id';
         $id->columnName = 'id';
-        $id->type = Types::INTEGER;
-        $id->id = true;
-        $id->options = ['unsigned' => true];
+        $id->type       = Types::INTEGER;
+        $id->id         = true;
+        $id->options    = ['unsigned' => true];
 
-        $name = new stdClass();
-        $name->fieldName = 'name';
+        $name             = new stdClass();
+        $name->fieldName  = 'name';
         $name->columnName = 'name';
-        $name->type = Types::STRING;
+        $name->type       = Types::STRING;
 
         $metadata->fieldMappings = [
             'id' => $id,
@@ -119,7 +124,7 @@ class PaginatorAdapterTest extends TestCase
             'name'              => 'foos',
             'schema'            => '',
             'indexes'           => [],
-            'uniqueConstraints' => []
+            'uniqueConstraints' => [],
         ];
 
         $metadata->shouldReceive('isInheritanceTypeSingleTable')->andReturn(false);
@@ -128,19 +133,19 @@ class PaginatorAdapterTest extends TestCase
         $metadata->shouldReceive('getTypeOfField')->andReturn(Types::INTEGER);
 
         $connection->shouldReceive('getDatabasePlatform')->andReturn($platform);
-        $connection->shouldReceive('executeQuery')->andReturn($this->createMock(\Doctrine\DBAL\Result::class));
+        $connection->shouldReceive('executeQuery')->andReturn($this->createMock(Result::class));
         $connection->shouldReceive('getParams')->andReturn([]);
 
-        $platform->shouldReceive('appendLockHint')->andReturnUsing(function ($a) {
+        $platform->shouldReceive('appendLockHint')->andReturnUsing(static function ($a) {
             return $a;
         });
         $platform->shouldReceive('getMaxIdentifierLength')->andReturn(PHP_INT_MAX);
-        $platform->shouldReceive('getSQLResultCasing')->andReturnUsing(function ($a) {
+        $platform->shouldReceive('getSQLResultCasing')->andReturnUsing(static function ($a) {
             return $a;
         });
         $platform->shouldReceive('getName')->andReturn('You shouldnt care');
-        $platform->shouldReceive('getCountExpression')->andReturnUsing(function ($col) {
-            return "COUNT($col)";
+        $platform->shouldReceive('getCountExpression')->andReturnUsing(static function ($col) {
+            return 'COUNT(' . $col . ')';
         });
         $platform->shouldReceive('supportsLimitOffset')->andReturn(true);
 
