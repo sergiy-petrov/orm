@@ -16,7 +16,7 @@ class DoctrineServiceProviderTest extends TestCase
 
         $this->assertInstanceOf(
             ManagerRegistry::class,
-            $registry
+            $registry,
         );
     }
 
@@ -34,7 +34,7 @@ class DoctrineServiceProviderTest extends TestCase
 
         $this->assertInstanceOf(
             ClassMetadataFactory::class,
-            $metaDataFactory
+            $metaDataFactory,
         );
     }
 }
