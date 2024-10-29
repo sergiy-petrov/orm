@@ -19,20 +19,20 @@ class ConnectionManagerTest extends TestCase
 {
     protected ConnectionManager $manager;
 
-    protected Container $app;
+    protected Container $testApp;
 
     protected Repository $config;
 
     protected function setUp(): void
     {
-        $this->app = m::mock(Container::class);
-        $this->app->shouldReceive('make')->andReturn(m::self());
+        $this->testApp = m::mock(Container::class);
+        $this->testApp->shouldReceive('make')->andReturn(m::self());
 
         $this->config = m::mock(Repository::class);
         $this->config->shouldReceive('get');
 
         $this->manager = new ConnectionManager(
-            $this->app,
+            $this->testApp,
         );
 
         parent::setUp();
@@ -40,7 +40,7 @@ class ConnectionManagerTest extends TestCase
 
     public function testDriverReturnsTheDefaultDriver(): void
     {
-        $this->app->shouldReceive('resolve')->andReturn(
+        $this->testApp->shouldReceive('resolve')->andReturn(
             (new MysqlConnection($this->config))->resolve(),
         );
 
@@ -50,7 +50,7 @@ class ConnectionManagerTest extends TestCase
 
     public function testDriverCanReturnAGivenDriver(): void
     {
-        $this->app->shouldReceive('resolve')->andReturn(
+        $this->testApp->shouldReceive('resolve')->andReturn(
             (new SqliteConnection($this->config))->resolve(),
         );
 

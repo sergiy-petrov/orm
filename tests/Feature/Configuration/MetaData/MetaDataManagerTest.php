@@ -15,15 +15,15 @@ class MetaDataManagerTest extends TestCase
 {
     protected MetaDataManager $manager;
 
-    protected Container $app;
+    protected Container $testApp;
 
     protected function setUp(): void
     {
-        $this->app = m::mock(Container::class);
-        $this->app->shouldReceive('make')->andReturn(m::self());
+        $this->testApp = m::mock(Container::class);
+        $this->testApp->shouldReceive('make')->andReturn(m::self());
 
         $this->manager = new MetaDataManager(
-            $this->app,
+            $this->testApp,
         );
 
         parent::setUp();
@@ -31,7 +31,7 @@ class MetaDataManagerTest extends TestCase
 
     public function testDriverReturnsTheDefaultDriver(): void
     {
-        $this->app->shouldReceive('resolve')->andReturn(new XmlDriver('locator', '.xml'));
+        $this->testApp->shouldReceive('resolve')->andReturn(new XmlDriver('locator', '.xml'));
 
         $this->assertInstanceOf(XmlDriver::class, $this->manager->driver());
     }

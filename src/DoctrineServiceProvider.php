@@ -10,10 +10,8 @@ use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\ORM\Proxy\Autoloader;
 use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
 use LaravelDoctrine\ORM\Auth\DoctrineUserProvider;
 use LaravelDoctrine\ORM\Configuration\Cache\CacheManager;
@@ -38,7 +36,6 @@ use LaravelDoctrine\ORM\Validation\PresenceVerifierProvider;
 use function assert;
 use function class_exists;
 use function config_path;
-use function property_exists;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
@@ -50,13 +47,9 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->extendAuthManager();
         $this->extendNotificationChannel();
 
-        if (! $this->isLumen()) {
-            $this->publishes([
-                $this->getConfigPath() => config_path('doctrine.php'),
-            ], 'config');
-        }
-
-        $this->ensureValidatorIsUsable();
+        $this->publishes([
+            $this->getConfigPath() => config_path('doctrine.php'),
+        ], 'config');
     }
 
     /**
@@ -83,28 +76,6 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->registerPresenceVerifierProvider();
     }
 
-    protected function ensureValidatorIsUsable(): void
-    {
-        if (! $this->isLumen()) {
-            return;
-        }
-
-        assert(property_exists($this->app, 'availableBindings'));
-
-        if ($this->shouldRegisterDoctrinePresenceValidator()) {
-            // due to weirdness the default presence verifier overrides one set by a service provider
-            // so remove them so we can re add our implementation later
-            unset($this->app->availableBindings['validator']);
-            unset($this->app->availableBindings[ValidationFactory::class]);
-        } else {
-            // resolve the db,
-            // this makes `isset($this->app['db']) == true`
-            // which is required to set the presence verifier
-            // in the default ValidationServiceProvider implementation
-            $this->app['db'];
-        }
-    }
-
     /**
      * Merge config
      */
@@ -114,14 +85,6 @@ class DoctrineServiceProvider extends ServiceProvider
             $this->getConfigPath(),
             'doctrine',
         );
-
-        if (! $this->isLumen()) {
-            return;
-        }
-
-        $this->app->configure('cache');
-        $this->app->configure('database');
-        $this->app->configure('doctrine');
     }
 
     /**
@@ -232,15 +195,7 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function registerPresenceVerifierProvider(): void
     {
-        if ($this->isLumen()) {
-            $this->app->singleton('validator', function () {
-                $this->app->register(PresenceVerifierProvider::class);
-
-                return $this->app->make('validator');
-            });
-        } else {
-            $this->app->register(PresenceVerifierProvider::class);
-        }
+        $this->app->register(PresenceVerifierProvider::class);
     }
 
     /**
@@ -279,7 +234,7 @@ class DoctrineServiceProvider extends ServiceProvider
 
     /**
      * Boots the extension manager at the appropriate time depending on if the app
-     * is running as Laravel HTTP, Lumen HTTP or in a console environment
+     * is running as Laravel HTTP or in a console environment
      */
     protected function bootExtensionManager(): void
     {
@@ -352,11 +307,6 @@ class DoctrineServiceProvider extends ServiceProvider
             GenerateProxiesCommand::class,
             DumpDatabaseCommand::class,
         ]);
-    }
-
-    protected function isLumen(): bool
-    {
-        return Str::contains($this->app->version(), 'Lumen');
     }
 
     protected function shouldRegisterDoctrinePresenceValidator(): bool
