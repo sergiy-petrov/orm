@@ -311,6 +311,6 @@ class DoctrineServiceProvider extends ServiceProvider
 
     protected function shouldRegisterDoctrinePresenceValidator(): bool
     {
-        return $this->app['config']->get('doctrine.doctrine_presence_verifier', true);
+        return config('doctrine.doctrine_presence_verifier', true);
     }
 }
