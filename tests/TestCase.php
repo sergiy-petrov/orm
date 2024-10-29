@@ -4,29 +4,20 @@ declare(strict_types=1);
 
 namespace LaravelDoctrineTest\ORM;
 
-use Illuminate\Foundation\Application;
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use Orchestra\Testbench\Concerns\WithWorkbench;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
-class TestCase extends PHPUnitTestCase
+class TestCase extends OrchestraTestCase
 {
-    private Application $application;
+    use WithWorkbench;
 
     protected function setUp(): void
     {
-        $this->application = new Application();
-
         parent::setUp();
     }
 
     protected function tearDown(): void
     {
-        unset($this->application);
-
         parent::tearDown();
-    }
-
-    public function getApplication(): Application
-    {
-        return $this->application;
     }
 }

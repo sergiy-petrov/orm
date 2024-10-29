@@ -15,7 +15,10 @@ class PhpFileCacheProviderTest extends CacheProvider
     {
         $config = m::mock(Repository::class);
         $config->shouldReceive('get')
-            ->with('cache.stores.file.path', '/storage/framework/cache')
+            ->with(
+                'cache.stores.file.path',
+                $this->applicationBasePath() . '/storage/framework/cache',
+            )
             ->once()
             ->andReturn('/tmp');
 

@@ -19,18 +19,18 @@ class CacheManagerTest extends TestCase
 {
     protected CacheManager $manager;
 
-    protected Container $app;
+    protected Container $testApp;
 
     protected Repository $config;
 
     protected function setUp(): void
     {
-        $this->app = m::mock(Container::class);
-        $this->app->shouldReceive('make')->andReturn(m::self());
-        $this->app->shouldReceive('get')->with('doctrine.cache.default', 'array')->andReturn('array');
+        $this->testApp = m::mock(Container::class);
+        $this->testApp->shouldReceive('make')->andReturn(m::self());
+        $this->testApp->shouldReceive('get')->with('doctrine.cache.default', 'array')->andReturn('array');
 
         $this->manager = new CacheManager(
-            $this->app,
+            $this->testApp,
         );
 
         parent::setUp();
@@ -38,7 +38,7 @@ class CacheManagerTest extends TestCase
 
     public function testDriverReturnsTheDefaultDriver(): void
     {
-        $this->app->shouldReceive('resolve')->andReturn(new ArrayCacheProvider());
+        $this->testApp->shouldReceive('resolve')->andReturn(new ArrayCacheProvider());
 
         $this->assertInstanceOf(ArrayCacheProvider::class, $this->manager->driver());
         $this->assertInstanceOf(ArrayAdapter::class, $this->manager->driver()->resolve());
@@ -49,7 +49,7 @@ class CacheManagerTest extends TestCase
         $config = m::mock(Repository::class);
         $app    = m::mock(Application::class);
 
-        $this->app->shouldReceive('resolve')->andReturn(new FileCacheProvider(
+        $this->testApp->shouldReceive('resolve')->andReturn(new FileCacheProvider(
             $config,
             $app,
         ));
