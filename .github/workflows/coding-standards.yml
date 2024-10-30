@@ -13,7 +13,7 @@ on:
 jobs:
   coding-standards:
     name: "Coding Standards"
-    uses: "doctrine/.github/.github/workflows/coding-standards.yml"
+    uses: "doctrine/.github/.github/workflows/coding-standards.yml@5.2.0"
     with:
       php-version: '8.2'
       composer-options: '--prefer-dist --ignore-platform-req=php'
