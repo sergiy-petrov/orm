@@ -47,7 +47,10 @@
         "phpunit/phpunit": "^11.4",
         "fakerphp/faker": "^1.23",
         "laravel/framework": "^10.0 || ^11.0",
-        "orchestra/testbench": "^9.5"
+        "orchestra/testbench": "^9.5",
+        "beberlei/doctrineextensions": "^1.5",
+        "laravel-doctrine/extensions": "2.0.x-dev",
+        "gedmo/doctrine-extensions": "^3.17"
     },
     "conflict": {
         "laravel/lumen": "*"
