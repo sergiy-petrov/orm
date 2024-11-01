@@ -301,6 +301,8 @@ final class IlluminateRegistry implements ManagerRegistry
      * Gets the object manager associated with a given class.
      *
      * @param class-string $className A persistent object class name.
+     *
+     * @return ($throwExceptionIfNotFound is true ? ObjectManager : ObjectManager|null)
      */
     public function getManagerForClass(string $className, bool $throwExceptionIfNotFound = false): ObjectManager|null
     {
