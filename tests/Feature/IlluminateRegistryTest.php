@@ -485,6 +485,37 @@ class IlluminateRegistryTest extends TestCase
         $this->assertEquals($entityManager, $this->registry->getManagerForClass('Alias:Scientist'));
     }
 
+    public function testGetManagerForClassReturnsNullWhenNotFound(): void
+    {
+        $this->container->shouldReceive('singleton');
+        $this->registry->addManager('default');
+
+        $entityManager = m::mock(EntityManagerInterface::class);
+        $this->container->shouldReceive('make')
+            ->with('doctrine.managers.default')
+            ->andReturn($entityManager);
+
+        $metadataFactory = m::mock(ClassMetadataFactory::class);
+        $metadataFactory->shouldReceive('isTransient')
+            ->with('LaravelDoctrineTest\ORM\Assets\Entity\Scientist')
+            ->once()
+            ->andReturnFalse();
+
+        $metadata = m::mock(ClassMetadata::class);
+        $metadata->shouldReceive('getName')
+            ->once()
+            ->andReturn('LaravelDoctrineTest\ORM\Assets\Entity\Theory');
+
+        $metadataFactory->shouldReceive('getAllMetadata')
+            ->once()
+            ->andReturn([$metadata]);
+
+        $entityManager->shouldReceive('getMetadataFactory')
+            ->andReturn($metadataFactory);
+
+        $this->assertNull($this->registry->getManagerForClass('LaravelDoctrineTest\ORM\Assets\Entity\Scientist'));
+    }
+
     public function testGetManagerForClassThrowsExceptionWhenNotFound(): void
     {
         $this->expectException(RuntimeException::class);
@@ -515,7 +546,7 @@ class IlluminateRegistryTest extends TestCase
         $entityManager->shouldReceive('getMetadataFactory')
             ->andReturn($metadataFactory);
 
-        $this->assertEquals($entityManager, $this->registry->getManagerForClass('LaravelDoctrineTest\ORM\Assets\Entity\Scientist'));
+        $this->assertEquals($entityManager, $this->registry->getManagerForClass('LaravelDoctrineTest\ORM\Assets\Entity\Scientist', true));
     }
 
     public function testGetManagerForClassInvalidClass(): void
