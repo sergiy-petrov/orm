@@ -1,12 +1,13 @@
 providers:
   - LaravelDoctrine\ORM\DoctrineServiceProvider
 
+laravel: ./workbench
 workbench:
   start: '/'
   install: true
   health: false
   discovers:
-    web: fale
+    web: false
     api: false
     commands: false
     components: false

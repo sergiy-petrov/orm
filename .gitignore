@@ -11,3 +11,7 @@ composer.lock
 /tests/Stubs/storage/doctrine.generated.php
 .idea
 laravel-doctrine-orm.iml
+/workbench/bootstrap/cache/*
+!/workbench/bootstrap/cache/.gitkeep
+/workbench/storage/logs/*
+/workbench/vendor

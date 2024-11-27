@@ -31,12 +31,15 @@ use LaravelDoctrine\ORM\Console\SchemaValidateCommand;
 use LaravelDoctrine\ORM\Exceptions\ExtensionNotFound;
 use LaravelDoctrine\ORM\Extensions\ExtensionManager;
 use LaravelDoctrine\ORM\Notifications\DoctrineChannel;
+use LaravelDoctrine\ORM\Testing\Factory as EntityFactory;
 use LaravelDoctrine\ORM\Validation\PresenceVerifierProvider;
 
 use function assert;
 use function class_exists;
 use function config;
 use function config_path;
+use function database_path;
+use function fake;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
@@ -68,6 +71,7 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->registerExtensions();
         $this->registerConsoleCommands();
         $this->registerCustomTypes();
+        $this->registerEntityFactory();
         $this->registerProxyAutoloader();
 
         if (! $this->shouldRegisterDoctrinePresenceValidator()) {
@@ -267,6 +271,20 @@ class DoctrineServiceProvider extends ServiceProvider
 
         $this->app->make(ChannelManager::class)->extend($channel, static function ($app) {
             return new DoctrineChannel($app['registry']);
+        });
+    }
+
+    /**
+     * Register the Entity factory instance in the container.
+     */
+    protected function registerEntityFactory(): void
+    {
+        $this->app->singleton(EntityFactory::class, static function ($app) {
+            return EntityFactory::construct(
+                fake(),
+                $app->make('registry'),
+                database_path('factories'),
+            );
         });
     }
 
